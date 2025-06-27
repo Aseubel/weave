@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/weave?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
+    username: root
+    password: root
+  jpa:
+    show-sql: true #是否打印SQL语句，默认false
+    hibernate:
+      ddl-auto: create #自动更新数据库表结构，默认none，可选值none、create、create-drop、validate、update

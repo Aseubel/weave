@@ -29,9 +29,9 @@ public abstract class BaseEntity implements Serializable {
 
     @CreatedDate // 实体创建时自动填充
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @LastModifiedDate // 实体更新时自动填充
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 }

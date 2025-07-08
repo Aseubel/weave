@@ -7,4 +7,53 @@ spring:
   jpa:
     show-sql: true #是否打印SQL语句，默认false
     hibernate:
-      ddl-auto: create #自动更新数据库表结构，默认none，可选值none、create、create-drop、validate、update
+      ddl-auto: none #自动更新数据库表结构，默认none、可选值none、create、create-drop、validate、update
+  # Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: # Redis密码，如果没有设置密码则留空
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+# JWT配置
+jwt:
+  secret: 4ligUANwjrxTBFxYesepp/sd32D5S4Igz7FwNDmfItPgNu8aCxnrCVe5LZebisL6J3jtGLMZF+aGDnM6vjPLFA==
+  access-token-expiration: 1800000 # 30分钟 (毫秒)
+  refresh-token-expiration: 604800000 # 7天 (毫秒)
+
+# 第三方登录配置
+third-party:
+  wechat:
+    app-id: your-wechat-app-id
+    app-secret: your-wechat-app-secret
+    redirect-uri: http://localhost:8080/api/auth/wechat/callback
+  qq:
+    app-id: your-qq-app-id
+    app-key: your-qq-app-key
+    redirect-uri: http://localhost:8080/api/auth/qq/callback
+
+# 短信配置
+sms:
+  provider: aliyun # 可选: aliyun, tencent
+  access-key: your-access-key
+  secret-key: your-secret-key
+  sign-name: 织梦平台
+  template-code: SMS_123456789
+
+# 应用配置
+app:
+  password: Weave123456 # 默认账户密码
+
+# 日志
+logging:
+  level:
+    root: info
+  config: classpath:logback-spring.xml

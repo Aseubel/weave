@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>非遗传承资源展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .category-select {
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .search-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .categories-section {
+            margin-bottom: 30px;
+        }
+
+        .categories-title {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .category-card h3 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .category-card .count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .resources-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .resources-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .resource-card {
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .resource-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #f0f2f5, #e1e5e9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .resource-content {
+            padding: 15px;
+        }
+
+        .resource-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .resource-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .resource-type {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #e1e5e9;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination button:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .pagination button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #e74c3c;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-input {
+                min-width: 100%;
+            }
+
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>非遗传承资源展示</h1>
+            <p>传承中华文化，弘扬非遗精神</p>
+        </div>
+
+        <div class="search-section">
+            <div class="search-form">
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索非遗资源...">
+                <select class="category-select" id="categorySelect">
+                    <option value="">所有分类</option>
+                </select>
+                <button class="search-btn" onclick="searchResources()">搜索</button>
+            </div>
+        </div>
+
+        <div class="categories-section">
+            <h2 class="categories-title">资源分类</h2>
+            <div class="categories-grid" id="categoriesGrid">
+                <!-- 分类卡片将在这里动态生成 -->
+            </div>
+        </div>
+
+        <div class="resources-section">
+            <h2 class="resources-title">资源列表</h2>
+            <div id="resourcesContainer">
+                <div class="loading">正在加载资源...</div>
+            </div>
+            <div class="pagination" id="pagination">
+                <!-- 分页按钮将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentPage = 0;
+        let totalPages = 0;
+        let currentKeyword = '';
+        let currentCategoryId = '';
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCategories();
+            loadResources();
+        });
+
+        // 加载分类
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/ich/categories');
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayCategories(result.data);
+                    populateCategorySelect(result.data);
+                }
+            } catch (error) {
+                console.error('加载分类失败:', error);
+            }
+        }
+
+        // 显示分类
+        function displayCategories(categories) {
+            const grid = document.getElementById('categoriesGrid');
+            grid.innerHTML = categories.map(category => `
+                <div class="category-card" onclick="filterByCategory(${category.id})">
+                    <h3>${category.name}</h3>
+                    <div class="count">${category.resourceCount} 个资源</div>
+                </div>
+            `).join('');
+        }
+
+        // 填充分类选择器
+        function populateCategorySelect(categories) {
+            const select = document.getElementById('categorySelect');
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                select.appendChild(option);
+            });
+        }
+
+        // 加载资源
+        async function loadResources(page = 0, keyword = '', categoryId = '') {
+            try {
+                document.getElementById('resourcesContainer').innerHTML = '<div class="loading">正在加载资源...</div>';
+                
+                let url = `/api/ich/resources?page=${page}&size=12&sortBy=createdAt&sortDir=desc`;
+                
+                if (keyword && categoryId) {
+                    url = `/api/ich/resources/search/category/${categoryId}?keyword=${encodeURIComponent(keyword)}&page=${page}&size=12`;
+                } else if (keyword) {
+                    url = `/api/ich/resources/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=12`;
+                } else if (categoryId) {
+                    url = `/api/ich/resources/category/${categoryId}?page=${page}&size=12`;
+                }
+                
+                const response = await fetch(url);
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayResources(result.data.content);
+                    updatePagination(result.data);
+                } else {
+                    document.getElementById('resourcesContainer').innerHTML = '<div class="error">加载资源失败</div>';
+                }
+            } catch (error) {
+                console.error('加载资源失败:', error);
+                document.getElementById('resourcesContainer').innerHTML = '<div class="error">网络错误，请稍后重试</div>';
+            }
+        }
+
+        // 显示资源
+        function displayResources(resources) {
+            const container = document.getElementById('resourcesContainer');
+            
+            if (resources.length === 0) {
+                container.innerHTML = '<div class="error">暂无资源</div>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="resources-grid">
+                    ${resources.map(resource => `
+                        <div class="resource-card" onclick="viewResource(${resource.id})">
+                            <div class="resource-image">
+                                ${resource.type === 'STATIC' ? '📷 图片资源' : '🎬 视频资源'}
+                            </div>
+                            <div class="resource-content">
+                                <div class="resource-title">${resource.title}</div>
+                                <div class="resource-description">${resource.description}</div>
+                                <div class="resource-meta">
+                                    <span class="resource-type">${resource.type === 'STATIC' ? '静态' : '动态'}</span>
+                                    <span>${new Date(resource.createdAt).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 更新分页
+        function updatePagination(pageData) {
+            currentPage = pageData.number;
+            totalPages = pageData.totalPages;
+            
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let paginationHTML = '';
+            
+            // 上一页
+            if (currentPage > 0) {
+                paginationHTML += `<button onclick="goToPage(${currentPage - 1})">上一页</button>`;
+            }
+            
+            // 页码
+            for (let i = Math.max(0, currentPage - 2); i <= Math.min(totalPages - 1, currentPage + 2); i++) {
+                paginationHTML += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i + 1}</button>`;
+            }
+            
+            // 下一页
+            if (currentPage < totalPages - 1) {
+                paginationHTML += `<button onclick="goToPage(${currentPage + 1})">下一页</button>`;
+            }
+            
+            pagination.innerHTML = paginationHTML;
+        }
+
+        // 跳转到指定页
+        function goToPage(page) {
+            loadResources(page, currentKeyword, currentCategoryId);
+        }
+
+        // 搜索资源
+        function searchResources() {
+            currentKeyword = document.getElementById('searchInput').value.trim();
+            currentCategoryId = document.getElementById('categorySelect').value;
+            currentPage = 0;
+            loadResources(currentPage, currentKeyword, currentCategoryId);
+        }
+
+        // 按分类筛选
+        function filterByCategory(categoryId) {
+            currentCategoryId = categoryId;
+            currentKeyword = '';
+            currentPage = 0;
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categorySelect').value = categoryId;
+            loadResources(currentPage, currentKeyword, currentCategoryId);
+        }
+
+        // 查看资源详情
+        function viewResource(resourceId) {
+            // 这里可以跳转到资源详情页面或显示模态框
+            alert(`查看资源详情: ${resourceId}`);
+        }
+
+        // 搜索框回车事件
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchResources();
+            }
+        });
+    </script>
+</body>
+</html>

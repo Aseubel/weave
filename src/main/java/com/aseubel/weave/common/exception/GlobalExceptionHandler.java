@@ -1,5 +1,7 @@
 package com.aseubel.weave.common.exception;
 
+import com.aseubel.weave.exception.ResourceNotFoundException;
+import com.aseubel.weave.exception.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +63,34 @@ public class GlobalExceptionHandler {
         result.put("message", e.getMessage());
         result.put("timestamp", System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
+
+    /**
+     * 处理资源未找到异常
+     */
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleResourceNotFoundException(ResourceNotFoundException e) {
+        log.warn("资源未找到异常: {}", e.getMessage());
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", false);
+        result.put("code", e.getCode());
+        result.put("message", e.getMessage());
+        result.put("timestamp", System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    }
+
+    /**
+     * 处理未授权异常
+     */
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Map<String, Object>> handleUnauthorizedException(UnauthorizedException e) {
+        log.warn("未授权异常: {}", e.getMessage());
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", false);
+        result.put("code", e.getCode());
+        result.put("message", e.getMessage());
+        result.put("timestamp", System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
     }
 
     /**

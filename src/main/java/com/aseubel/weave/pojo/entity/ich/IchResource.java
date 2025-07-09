@@ -1,7 +1,7 @@
 package com.aseubel.weave.pojo.entity.ich;
 
 import com.aseubel.weave.pojo.entity.BaseEntity;
-import com.aseubel.weave.pojo.entity.User;
+import com.aseubel.weave.pojo.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 

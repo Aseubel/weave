@@ -1,8 +1,8 @@
 package com.aseubel.weave.pojo.refer;
 
-import com.aseubel.weave.pojo.entity.Badge;
+import com.aseubel.weave.pojo.entity.user.Badge;
 import com.aseubel.weave.pojo.entity.BaseEntity;
-import com.aseubel.weave.pojo.entity.User;
+import com.aseubel.weave.pojo.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

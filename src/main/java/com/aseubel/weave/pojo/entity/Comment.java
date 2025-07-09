@@ -1,12 +1,14 @@
 package com.aseubel.weave.pojo.entity;
 
 import com.aseubel.weave.pojo.entity.ich.IchResource;
+import com.aseubel.weave.pojo.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Set;
 
 /**
+ * 评论实体 - 支持对帖子和资源的评论
  * @author Aseubel
  * @date 2025/6/27 下午7:50
  */
@@ -23,13 +25,23 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // 评论者
 
+    // 评论的帖子（可选）
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resource_id", nullable = false)
-    private IchResource resource; // 评论的资源
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    // 评论的资源（可选）
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resource_id")
+    private IchResource resource;
 
     @Lob
     @Column(nullable = false)
     private String content; // 评论内容
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer likeCount = 0; // 评论点赞数
 
     // 自关联，用于实现回复功能
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,4 +50,16 @@ public class Comment extends BaseEntity {
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Comment> replies;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private CommentStatus status = CommentStatus.PUBLISHED; // 评论状态
+
+    // 评论状态枚举
+    public enum CommentStatus {
+        PUBLISHED, // 已发布
+        HIDDEN,    // 隐藏
+        DELETED    // 已删除
+    }
 }

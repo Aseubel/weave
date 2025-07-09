@@ -1,5 +1,6 @@
-package com.aseubel.weave.pojo.entity;
+package com.aseubel.weave.pojo.entity.user;
 
+import com.aseubel.weave.pojo.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

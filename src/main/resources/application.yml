@@ -5,9 +5,8 @@ spring:
     username: root
     password: root
   jpa:
-    show-sql: true #是否打印SQL语句，默认false
     hibernate:
-      ddl-auto: none #自动更新数据库表结构，默认none、可选值none、create、create-drop、validate、update
+      ddl-auto: update #自动更新数据库表结构，默认none、可选值none、create、create-drop、validate、update
   # Redis配置
   data:
     redis:

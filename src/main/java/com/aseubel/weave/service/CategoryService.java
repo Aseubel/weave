@@ -6,7 +6,7 @@ import com.aseubel.weave.pojo.dto.ich.CategoryResponse;
 import java.util.List;
 
 /**
- * 分类服务接口
+ * 分类服务接口 - 支持层级分类
  * @author Aseubel
  * @date 2025/7/8
  */
@@ -38,9 +38,24 @@ public interface CategoryService {
     List<CategoryResponse> getAllCategories();
 
     /**
+     * 获取顶级分类（十大类）
+     */
+    List<CategoryResponse> getTopLevelCategories();
+
+    /**
+     * 获取指定分类的子分类
+     */
+    List<CategoryResponse> getSubCategories(Long parentId);
+
+    /**
+     * 获取分类树（包含所有层级）
+     */
+    List<CategoryResponse> getCategoryTree();
+
+    /**
      * 根据名称搜索分类
      */
-    List<CategoryResponse> searchCategoriesByName(String name);
+    List<CategoryResponse> searchCategories(String name);
 
     /**
      * 获取有资源的分类

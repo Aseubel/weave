@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  * 非遗资源服务实现类
  * @author Aseubel
- * @date 2025/1/15
+ * @date 2025/7/8
  */
 @Service
 @RequiredArgsConstructor

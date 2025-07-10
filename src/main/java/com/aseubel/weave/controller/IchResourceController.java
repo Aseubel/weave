@@ -20,7 +20,7 @@ import java.util.List;
  * 非遗资源控制器
  *
  * @author Aseubel
- * @date 2025/1/15
+ * @date 2025/7/8
  */
 @RestController
 @RequestMapping("/api/ich/resources")
@@ -29,6 +29,9 @@ public class IchResourceController {
 
     private final IchResourceService ichResourceService;
 
+    /**
+     * 创建资源
+     */
     @PostMapping
     public ApiResponse<IchResourceResponse> createResource(
             @Valid @RequestBody IchResourceRequest request) {
@@ -37,6 +40,9 @@ public class IchResourceController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 更新资源
+     */
     @PutMapping("/{id}")
     public ApiResponse<IchResourceResponse> updateResource(
             @PathVariable Long id,
@@ -46,6 +52,9 @@ public class IchResourceController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 删除资源
+     */
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteResource(@PathVariable Long id) {
         Long userId = UserContext.getCurrentUserId();
@@ -53,12 +62,18 @@ public class IchResourceController {
         return ApiResponse.success();
     }
 
+    /**
+     * 获取资源信息
+     */
     @GetMapping("/{id}")
     public ApiResponse<IchResourceResponse> getResourceById(@PathVariable Long id) {
         IchResourceResponse response = ichResourceService.getResourceById(id);
         return ApiResponse.success(response);
     }
 
+    /**
+     * 获取所有资源信息
+     */
     @GetMapping
     public ApiResponse<Page<IchResourceResponse>> getAllResources(
             @RequestParam(defaultValue = "0") int page,
@@ -73,6 +88,9 @@ public class IchResourceController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 获取某分类资源
+     */
     @GetMapping("/category/{categoryId}")
     public ApiResponse<Page<IchResourceResponse>> getResourcesByCategory(
             @PathVariable Long categoryId,
@@ -88,6 +106,9 @@ public class IchResourceController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 获取某类型资源（动\静态）
+     */
     @GetMapping("/type/{type}")
     public ApiResponse<Page<IchResourceResponse>> getResourcesByType(
             @PathVariable ResourceType type,
@@ -103,6 +124,9 @@ public class IchResourceController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 获取某上传者资源
+     */
     @GetMapping("/uploader/{uploaderId}")
     public ApiResponse<Page<IchResourceResponse>> getResourcesByUploader(
             @PathVariable Long uploaderId,
@@ -118,6 +142,9 @@ public class IchResourceController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 搜索资源
+     */
     @GetMapping("/search")
     public ApiResponse<Page<IchResourceResponse>> searchResources(
             @RequestParam String keyword,
@@ -133,6 +160,9 @@ public class IchResourceController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 搜索某分类资源
+     */
     @GetMapping("/search/category/{categoryId}")
     public ApiResponse<Page<IchResourceResponse>> searchResourcesByCategory(
             @PathVariable Long categoryId,
@@ -150,6 +180,9 @@ public class IchResourceController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 搜索某类型资源（动\静态）
+     */
     @GetMapping("/search/type/{type}")
     public ApiResponse<Page<IchResourceResponse>> searchResourcesByType(
             @PathVariable ResourceType type,
@@ -166,6 +199,9 @@ public class IchResourceController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 获取热门资源
+     */
     @GetMapping("/hot")
     public ApiResponse<List<IchResourceResponse>> getHotResources(
             @RequestParam(defaultValue = "10") int limit) {
@@ -173,6 +209,9 @@ public class IchResourceController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 获取推荐资源
+     */
     @GetMapping("/{id}/recommended")
     public ApiResponse<List<IchResourceResponse>> getRecommendedResources(
             @PathVariable Long id,

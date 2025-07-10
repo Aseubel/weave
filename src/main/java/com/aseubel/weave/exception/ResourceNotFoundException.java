@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * 资源未找到异常
  * @author Aseubel
- * @date 2025/1/15
+ * @date 2025/7/8
  */
 @Getter
 public class ResourceNotFoundException extends RuntimeException {

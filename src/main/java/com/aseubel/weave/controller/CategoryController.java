@@ -14,7 +14,7 @@ import java.util.List;
  * 分类控制器
  *
  * @author Aseubel
- * @date 2025/1/15
+ * @date 2025/7/8
  */
 @RestController
 @RequestMapping("/api/ich/categories")

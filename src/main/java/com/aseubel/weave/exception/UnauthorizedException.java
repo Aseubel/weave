@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * 未授权异常
  * @author Aseubel
- * @date 2025/1/15
+ * @date 2025/7/8
  */
 @Getter
 public class UnauthorizedException extends RuntimeException {

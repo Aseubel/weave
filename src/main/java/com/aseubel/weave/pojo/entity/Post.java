@@ -49,19 +49,19 @@ public class Post extends BaseEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer viewCount = 0; // 浏览次数
+    private Long viewCount = 0L; // 浏览次数
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer likeCount = 0; // 点赞数
+    private Long likeCount = 0L; // 点赞数
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer commentCount = 0; // 评论数
+    private Long commentCount = 0L; // 评论数
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer shareCount = 0; // 分享数
+    private Long shareCount = 0L; // 分享数
 
     @Builder.Default
     @Column(nullable = false)

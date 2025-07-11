@@ -1,5 +1,6 @@
 package com.aseubel.weave.pojo.dto.post;
 
+import com.aseubel.weave.common.annotation.FieldDesc;
 import com.aseubel.weave.pojo.entity.Post;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,13 +30,18 @@ public class PostRequest {
     @NotNull(message = "帖子类型不能为空")
     private Post.PostType type;
 
-    private List<String> images; // 图片URL列表
+    @FieldDesc(name = "图片URL列表")
+    private List<String> images;
 
-    private List<String> tags; // 标签列表
+    @FieldDesc(name = "标签列表")
+    private List<String> tags;
 
-    private Set<Long> interestTagIds; // 兴趣标签ID集合
+    @FieldDesc(name = "兴趣标签ID集合")
+    private Set<Long> interestTagIds;
 
-    private Boolean isTop = false; // 是否置顶（管理员功能）
+//    @FieldDesc(name = "是否置顶（管理员功能）")
+//    private Boolean isTop = false;
 
-    private Post.PostStatus status = Post.PostStatus.PUBLISHED; // 帖子状态
+    @FieldDesc(name = "帖子状态")
+    private Post.PostStatus status = Post.PostStatus.PUBLISHED;
 }

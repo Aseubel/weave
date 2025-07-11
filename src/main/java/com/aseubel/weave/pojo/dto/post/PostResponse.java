@@ -29,10 +29,10 @@ public class PostResponse {
     private Post.PostStatus status;
     private List<String> images;
     private List<String> tags;
-    private Integer viewCount;
-    private Integer likeCount;
-    private Integer commentCount;
-    private Integer shareCount;
+    private Long viewCount;
+    private Long likeCount;
+    private Long commentCount;
+    private Long shareCount;
     private Boolean isTop;
     private Boolean isHot;
     private LocalDateTime createdAt;

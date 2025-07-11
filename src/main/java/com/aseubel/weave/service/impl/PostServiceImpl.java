@@ -55,7 +55,7 @@ public class PostServiceImpl implements PostService {
                 .status(request.getStatus())
                 .images(convertListToJson(request.getImages()))
                 .tags(convertTagsToString(request.getTags()))
-                .isTop(request.getIsTop())
+                .isTop(false)
                 .build();
 
         // 设置兴趣标签

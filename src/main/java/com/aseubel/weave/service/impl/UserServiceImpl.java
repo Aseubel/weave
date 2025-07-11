@@ -3,7 +3,7 @@ package com.aseubel.weave.service.impl;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.aseubel.weave.common.exception.BusinessException;
-import com.aseubel.weave.common.redis.KeyBuilder;
+import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.common.util.JwtUtil;
 import com.aseubel.weave.common.util.SensitiveDataUtil;
 import com.aseubel.weave.pojo.dto.auth.ChangePasswordRequest;

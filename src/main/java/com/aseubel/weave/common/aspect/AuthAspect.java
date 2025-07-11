@@ -3,7 +3,7 @@ package com.aseubel.weave.common.aspect;
 import com.aseubel.weave.common.annotation.constraint.RequireLogin;
 import com.aseubel.weave.common.annotation.constraint.RequirePermission;
 import com.aseubel.weave.common.exception.BusinessException;
-import com.aseubel.weave.common.redis.KeyBuilder;
+import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.common.util.JwtUtil;
 import com.aseubel.weave.context.UserContext;
 import com.aseubel.weave.pojo.entity.user.Role;

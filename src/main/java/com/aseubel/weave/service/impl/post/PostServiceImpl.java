@@ -1,4 +1,4 @@
-package com.aseubel.weave.service.impl;
+package com.aseubel.weave.service.impl.post;
 
 import com.aseubel.weave.common.exception.BusinessException;
 import com.aseubel.weave.context.UserContext;
@@ -6,8 +6,10 @@ import com.aseubel.weave.pojo.dto.common.PageResponse;
 import com.aseubel.weave.pojo.dto.post.PostRequest;
 import com.aseubel.weave.pojo.dto.post.PostResponse;
 import com.aseubel.weave.pojo.entity.*;
+import com.aseubel.weave.pojo.entity.post.Post;
 import com.aseubel.weave.pojo.entity.user.InterestTag;
 import com.aseubel.weave.pojo.entity.user.User;
+import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.repository.*;
 import com.aseubel.weave.service.PostService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +28,7 @@ import java.util.stream.Collectors;
 
 /**
  * 帖子服务实现类
- * 
+ *
  * @author Aseubel
  * @date 2025/6/29
  */
@@ -40,6 +43,7 @@ public class PostServiceImpl implements PostService {
     private final InterestTagRepository interestTagRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final StringRedisTemplate redisTemplate;
 
     @Override
     @Transactional
@@ -176,24 +180,42 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public void toggleLike(Long postId) {
         User currentUser = UserContext.getCurrentUser();
+        Long userId = currentUser.getId();
+        Boolean isLiked;
         Post post = getPostEntity(postId);
 
-        Optional<PostLike> existingLike = postLikeRepository.findByUserAndPost(currentUser, post);
-
-        if (existingLike.isPresent()) {
+        redisTemplate.opsForSet().add(KeyBuilder.postLikeRecentKey(), String.valueOf(userId));
+        if ((isLiked = isLiked(postId, userId)) == null) {
+            isLiked = postLikeRepository.findByUserAndPost(currentUser, post).isPresent();
+            redisTemplate.opsForHash().put(KeyBuilder.postLikeStatusKey(postId), userId, isLiked);
+        }
+        if (isLiked) {
             // 取消点赞
-            postLikeRepository.delete(existingLike.get());
-            postRepository.updateLikeCount(postId, -1);
+            redisTemplate.opsForHash().put(KeyBuilder.postLikeStatusKey(postId), userId, false);
+            redisTemplate.opsForHash().increment(KeyBuilder.postLikeCountKey(), postId, -1);
+            // todo mq异步更新数据库点赞状态
         } else {
             // 点赞
-            PostLike postLike = PostLike.builder()
-                    .user(currentUser)
-                    .post(post)
-                    .type(PostLike.LikeType.LIKE)
-                    .build();
-            postLikeRepository.save(postLike);
-            postRepository.updateLikeCount(postId, 1);
+            redisTemplate.opsForHash().put(KeyBuilder.postLikeStatusKey(postId), userId, true);
+            redisTemplate.opsForHash().increment(KeyBuilder.postLikeCountKey(), postId, 1);
+            // todo mq异步更新数据库点赞状态
         }
+//        Optional<PostLike> existingLike = postLikeRepository.findByUserAndPost(currentUser, post);
+//
+//        if (existingLike.isPresent()) {
+//            // 取消点赞
+//            postLikeRepository.delete(existingLike.get());
+//            postRepository.updateLikeCount(postId, -1);
+//        } else {
+//            // 点赞
+//            PostLike postLike = PostLike.builder()
+//                    .user(currentUser)
+//                    .post(post)
+//                    .type(PostLike.LikeType.LIKE)
+//                    .build();
+//            postLikeRepository.save(postLike);
+//            postRepository.updateLikeCount(postId, 1);
+//        }
     }
 
     @Override
@@ -237,6 +259,10 @@ public class PostServiceImpl implements PostService {
                 .hasNext(false)
                 .hasPrevious(false)
                 .build();
+    }
+
+    private Boolean isLiked(Long postId, Long userId) {
+        return redisTemplate.opsForSet().isMember(KeyBuilder.postLikeStatusKey(postId), userId);
     }
 
     private Post getPostEntity(Long postId) {

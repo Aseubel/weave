@@ -1,7 +1,7 @@
 package com.aseubel.weave.repository;
 
-import com.aseubel.weave.pojo.entity.Post;
-import com.aseubel.weave.pojo.entity.PostLike;
+import com.aseubel.weave.pojo.entity.post.Post;
+import com.aseubel.weave.pojo.entity.post.PostLike;
 import com.aseubel.weave.pojo.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

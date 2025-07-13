@@ -1,5 +1,6 @@
-package com.aseubel.weave.pojo.entity;
+package com.aseubel.weave.pojo.entity.post;
 
+import com.aseubel.weave.pojo.entity.BaseEntity;
 import com.aseubel.weave.pojo.entity.user.InterestTag;
 import com.aseubel.weave.pojo.entity.user.User;
 import jakarta.persistence.*;

@@ -5,7 +5,7 @@ import com.aseubel.weave.common.annotation.constraint.RequireLogin;
 import com.aseubel.weave.pojo.dto.common.PageResponse;
 import com.aseubel.weave.pojo.dto.post.PostRequest;
 import com.aseubel.weave.pojo.dto.post.PostResponse;
-import com.aseubel.weave.pojo.entity.Post;
+import com.aseubel.weave.pojo.entity.post.Post;
 import com.aseubel.weave.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

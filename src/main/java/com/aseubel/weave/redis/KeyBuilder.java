@@ -22,7 +22,17 @@ public class KeyBuilder {
         return APP + POST_LIKE_RECENT_KEY;
     }
 
-    public static String postLikeCountKey(Long postId) {
-        return APP + POST_LIKE_COUNT_KEY + postId;
+    /**
+     * map 记录点赞数的增量
+     */
+    public static String postLikeCountKey() {
+        return APP + POST_LIKE_COUNT_KEY;
+    }
+
+    /**
+     * set 记录点赞的用户
+     */
+    public static String postLikeStatusKey(Long postId) {
+        return APP + POST_LIKE_STATUS_KEY + postId;
     }
 }

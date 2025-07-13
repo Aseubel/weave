@@ -1,6 +1,6 @@
 package com.aseubel.weave.repository;
 
-import com.aseubel.weave.pojo.entity.Post;
+import com.aseubel.weave.pojo.entity.post.Post;
 import com.aseubel.weave.pojo.entity.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,14 +70,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      */
     @Modifying
     @Query("UPDATE Post p SET p.likeCount = p.likeCount + :increment WHERE p.id = :postId")
-    void updateLikeCount(@Param("postId") Long postId, @Param("increment") int increment);
+    void updateLikeCount(@Param("postId") Long postId, @Param("increment") Long increment);
 
     /**
      * 增加评论数
      */
     @Modifying
     @Query("UPDATE Post p SET p.commentCount = p.commentCount + :increment WHERE p.id = :postId")
-    void updateCommentCount(@Param("postId") Long postId, @Param("increment") int increment);
+    void updateCommentCount(@Param("postId") Long postId, @Param("increment") Long increment);
 
     /**
      * 查询用户关注的人的帖子

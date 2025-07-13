@@ -3,8 +3,7 @@ package com.aseubel.weave.service;
 import com.aseubel.weave.pojo.dto.common.PageResponse;
 import com.aseubel.weave.pojo.dto.post.PostRequest;
 import com.aseubel.weave.pojo.dto.post.PostResponse;
-import com.aseubel.weave.pojo.entity.Post;
-import org.springframework.data.domain.Page;
+import com.aseubel.weave.pojo.entity.post.Post;
 import org.springframework.data.domain.Pageable;
 
 /**

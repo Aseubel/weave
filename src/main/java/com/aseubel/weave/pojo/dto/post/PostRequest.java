@@ -1,7 +1,7 @@
 package com.aseubel.weave.pojo.dto.post;
 
 import com.aseubel.weave.common.annotation.FieldDesc;
-import com.aseubel.weave.pojo.entity.Post;
+import com.aseubel.weave.pojo.entity.post.Post;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

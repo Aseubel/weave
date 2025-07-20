@@ -35,4 +35,25 @@ public class KeyBuilder {
     public static String postLikeStatusKey(Long postId) {
         return APP + POST_LIKE_STATUS_KEY + postId;
     }
+
+    /**
+     * set
+     */
+    public static String commentLikeRecentKey() {
+        return APP + COMMENT_LIKE_RECENT_KEY;
+    }
+
+    /**
+     * map 记录点赞数的增量
+     */
+    public static String commentLikeCountKey() {
+        return APP + COMMENT_LIKE_COUNT_KEY;
+    }
+
+    /**
+     * set 记录点赞的用户
+     */
+    public static String commentLikeStatusKey(Long postId) {
+        return APP + COMMENT_LIKE_STATUS_KEY + postId;
+    }
 }

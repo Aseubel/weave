@@ -1,7 +1,7 @@
 package com.aseubel.weave.repository;
 
-import com.aseubel.weave.pojo.entity.Comment;
-import com.aseubel.weave.pojo.entity.Post;
+import com.aseubel.weave.pojo.entity.comment.Comment;
+import com.aseubel.weave.pojo.entity.post.Post;
 import com.aseubel.weave.pojo.entity.user.User;
 import com.aseubel.weave.pojo.entity.ich.IchResource;
 import org.springframework.data.domain.Page;
@@ -71,7 +71,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
      */
     @Modifying
     @Query("UPDATE Comment c SET c.likeCount = c.likeCount + :increment WHERE c.id = :commentId")
-    void updateLikeCount(@Param("commentId") Long commentId, @Param("increment") int increment);
+    void updateLikeCount(@Param("commentId") Long commentId, @Param("increment") long increment);
 
     /**
      * 查询热门评论（按点赞数排序）

@@ -2,6 +2,7 @@ package com.aseubel.weave.disruptor;
 
 import com.aseubel.weave.common.disruptor.Element;
 import com.aseubel.weave.common.repochain.ProcessorChain;
+import com.aseubel.weave.service.impl.comment.CommentProcessor;
 import com.aseubel.weave.service.impl.post.PostProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +23,7 @@ public class DisruptorChainConfig {
     public ProcessorChain<Element> disruptorChain() {
         ProcessorChain<Element> processorChain = new ProcessorChain<>();
         processorChain.addProcessor(applicationContext.getBean(PostProcessor.class));
+        processorChain.addProcessor(applicationContext.getBean(CommentProcessor.class));
         return processorChain;
     }
 }

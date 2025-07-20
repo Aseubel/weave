@@ -1,6 +1,6 @@
 package com.aseubel.weave.pojo.dto.comment;
 
-import com.aseubel.weave.pojo.entity.Comment;
+import com.aseubel.weave.pojo.entity.comment.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

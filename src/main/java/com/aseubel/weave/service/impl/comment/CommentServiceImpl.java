@@ -1,18 +1,27 @@
-package com.aseubel.weave.service.impl;
+package com.aseubel.weave.service.impl.comment;
 
+import cn.hutool.core.util.BooleanUtil;
+import com.aseubel.weave.common.disruptor.DisruptorProducer;
+import com.aseubel.weave.common.disruptor.EventType;
 import com.aseubel.weave.common.exception.BusinessException;
 import com.aseubel.weave.context.UserContext;
 import com.aseubel.weave.pojo.dto.comment.CommentRequest;
 import com.aseubel.weave.pojo.dto.comment.CommentResponse;
 import com.aseubel.weave.pojo.dto.common.PageResponse;
-import com.aseubel.weave.pojo.entity.*;
+import com.aseubel.weave.pojo.entity.comment.Comment;
+import com.aseubel.weave.pojo.entity.comment.CommentLike;
+import com.aseubel.weave.pojo.entity.ich.IchResource;
+import com.aseubel.weave.pojo.entity.post.Post;
+import com.aseubel.weave.pojo.entity.post.PostLike;
 import com.aseubel.weave.pojo.entity.user.User;
+import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.repository.*;
 import com.aseubel.weave.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +41,10 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final IchResourceRepository ichResourceRepository;
+    private final StringRedisTemplate redisTemplate;
+    private final CommentLikeRepository commentLikeRepository;
+    private final DisruptorProducer disruptorProducer;
 
     @Override
     @Transactional
@@ -49,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
             commentBuilder.post(post);
             
             // 增加帖子评论数
-            postRepository.updateCommentCount(request.getPostId(), 1);
+            postRepository.updateCommentCount(request.getPostId(), 1L);
         }
 
         // 设置父评论（如果是回复）
@@ -80,7 +93,7 @@ public class CommentServiceImpl implements CommentService {
         
         // 减少帖子评论数
         if (comment.getPost() != null) {
-            postRepository.updateCommentCount(comment.getPost().getId(), -1);
+            postRepository.updateCommentCount(comment.getPost().getId(), -1L);
         }
     }
 
@@ -99,10 +112,13 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public PageResponse<CommentResponse> getResourceComments(Long resourceId, Pageable pageable) {
         User currentUser = UserContext.getCurrentUser();
-        // 这里需要根据实际的IchResource repository来实现
-        // IchResource resource = ichResourceRepository.findById(resourceId)...
-        // 暂时抛出异常，等待IchResource相关实现
-        throw new BusinessException("资源评论功能暂未实现");
+        IchResource resource = ichResourceRepository.findById(resourceId)
+                .orElseThrow(() -> new BusinessException("资源不存在"));
+
+        Page<Comment> comments = commentRepository.findByResourceAndParentIsNullAndStatusOrderByCreatedAtDesc(
+                resource, Comment.CommentStatus.PUBLISHED, pageable);
+
+        return convertToPageResponse(comments, currentUser);
     }
 
     @Override
@@ -147,13 +163,39 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void toggleCommentLike(Long commentId) {
         User currentUser = UserContext.getCurrentUser();
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new BusinessException("评论不存在"));
-        
-        // 这里需要实现评论点赞的逻辑
-        // 可以创建一个CommentLike实体来处理评论点赞
-        // 暂时简单地更新点赞数
-        commentRepository.updateLikeCount(commentId, 1);
+        Comment comment = getCommentEntity(commentId);
+
+        Long userId = currentUser.getId();
+        Boolean isLiked;
+
+        redisTemplate.opsForSet().add(KeyBuilder.postLikeRecentKey(), String.valueOf(userId));
+        if ((isLiked = isLiked(commentId, userId)) == null) {
+            isLiked = commentLikeRepository.findByUserAndComment(currentUser, comment).isPresent();
+            redisTemplate.opsForHash().put(KeyBuilder.postLikeStatusKey(commentId), userId, isLiked);
+        }
+        if (isLiked) {
+            // 取消点赞
+            redisTemplate.opsForHash().put(KeyBuilder.commentLikeStatusKey(commentId), userId, false);
+            redisTemplate.opsForHash().increment(KeyBuilder.commentLikeCountKey(), commentId, -1);
+
+            CommentLike commentLike = CommentLike.builder()
+                    .user(currentUser)
+                    .comment(comment)
+                    .type(CommentLike.LikeType.DISLIKE)
+                    .build();
+            disruptorProducer.publish(commentLike, EventType.COMMENT_UNLIKE);
+        } else {
+            // 点赞
+            redisTemplate.opsForHash().put(KeyBuilder.commentLikeStatusKey(commentId), userId, true);
+            redisTemplate.opsForHash().increment(KeyBuilder.commentLikeCountKey(), commentId, 1);
+
+            CommentLike commentLike = CommentLike.builder()
+                    .user(currentUser)
+                    .comment(comment)
+                    .type(CommentLike.LikeType.DISLIKE)
+                    .build();
+            disruptorProducer.publish(commentLike, EventType.COMMENT_UNLIKE);
+        }
     }
 
     @Override
@@ -180,7 +222,19 @@ public class CommentServiceImpl implements CommentService {
         return convertToPageResponse(comments, currentUser);
     }
 
+    private Comment getCommentEntity(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new BusinessException("评论不存在"));
+    }
+
+    private Boolean isLiked(Long commentId, Long userId) {
+        return redisTemplate.opsForSet().isMember(KeyBuilder.commentLikeStatusKey(commentId), userId);
+    }
+
     private CommentResponse convertToCommentResponse(Comment comment, User currentUser) {
+        // 当前用户是否点赞
+        Boolean isLiked = isLiked(comment.getId(), currentUser.getId());
+
         // 获取回复列表
         List<Comment> replies = commentRepository.findByParentAndStatusOrderByCreatedAtAsc(
                 comment, Comment.CommentStatus.PUBLISHED);
@@ -200,7 +254,7 @@ public class CommentServiceImpl implements CommentService {
                 .parent(comment.getParent() != null ? convertToParentCommentInfo(comment.getParent()) : null)
                 .replies(replyResponses)
                 .replyCount(replies.size())
-                .isLiked(false) // 暂时设为false，需要实现CommentLike功能
+                .isLiked(BooleanUtil.isTrue(isLiked))
                 .build();
     }
 

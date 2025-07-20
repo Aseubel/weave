@@ -1,6 +1,8 @@
-package com.aseubel.weave.pojo.entity;
+package com.aseubel.weave.pojo.entity.comment;
 
+import com.aseubel.weave.pojo.entity.BaseEntity;
 import com.aseubel.weave.pojo.entity.ich.IchResource;
+import com.aseubel.weave.pojo.entity.post.Post;
 import com.aseubel.weave.pojo.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;

@@ -35,7 +35,7 @@ public class Category extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String name; // 分类名称
 
-    @Column(length = 500)
+    @Column(length = 5000)
     private String description; // 分类描述
 
     @Column(name = "parent_id")
@@ -56,6 +56,9 @@ public class Category extends BaseEntity {
 
     @Column(name = "sort_order")
     private Integer sortOrder; // 排序字段
+
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+    private List<Inheritor> inheritors; // 非遗传承者列表
 
     /**
      * 判断是否为顶级分类（十大类）

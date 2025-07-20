@@ -1,5 +1,7 @@
 package com.aseubel.weave.service.impl.post;
 
+import com.aseubel.weave.common.disruptor.DisruptorProducer;
+import com.aseubel.weave.common.disruptor.EventType;
 import com.aseubel.weave.common.exception.BusinessException;
 import com.aseubel.weave.context.UserContext;
 import com.aseubel.weave.pojo.dto.common.PageResponse;
@@ -7,6 +9,7 @@ import com.aseubel.weave.pojo.dto.post.PostRequest;
 import com.aseubel.weave.pojo.dto.post.PostResponse;
 import com.aseubel.weave.pojo.entity.*;
 import com.aseubel.weave.pojo.entity.post.Post;
+import com.aseubel.weave.pojo.entity.post.PostLike;
 import com.aseubel.weave.pojo.entity.user.InterestTag;
 import com.aseubel.weave.pojo.entity.user.User;
 import com.aseubel.weave.redis.KeyBuilder;
@@ -44,6 +47,7 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
     private final StringRedisTemplate redisTemplate;
+    private final DisruptorProducer disruptorProducer;
 
     @Override
     @Transactional
@@ -193,29 +197,25 @@ public class PostServiceImpl implements PostService {
             // 取消点赞
             redisTemplate.opsForHash().put(KeyBuilder.postLikeStatusKey(postId), userId, false);
             redisTemplate.opsForHash().increment(KeyBuilder.postLikeCountKey(), postId, -1);
-            // todo mq异步更新数据库点赞状态
+
+            PostLike postLike = PostLike.builder()
+                    .user(currentUser)
+                    .post(post)
+                    .type(PostLike.LikeType.DISLIKE)
+                    .build();
+            disruptorProducer.publish(postLike, EventType.POST_UNLIKE);
         } else {
             // 点赞
             redisTemplate.opsForHash().put(KeyBuilder.postLikeStatusKey(postId), userId, true);
             redisTemplate.opsForHash().increment(KeyBuilder.postLikeCountKey(), postId, 1);
-            // todo mq异步更新数据库点赞状态
+
+            PostLike postLike = PostLike.builder()
+                    .user(currentUser)
+                    .post(post)
+                    .type(PostLike.LikeType.LIKE)
+                    .build();
+            disruptorProducer.publish(postLike, EventType.POST_LIKE);
         }
-//        Optional<PostLike> existingLike = postLikeRepository.findByUserAndPost(currentUser, post);
-//
-//        if (existingLike.isPresent()) {
-//            // 取消点赞
-//            postLikeRepository.delete(existingLike.get());
-//            postRepository.updateLikeCount(postId, -1);
-//        } else {
-//            // 点赞
-//            PostLike postLike = PostLike.builder()
-//                    .user(currentUser)
-//                    .post(post)
-//                    .type(PostLike.LikeType.LIKE)
-//                    .build();
-//            postLikeRepository.save(postLike);
-//            postRepository.updateLikeCount(postId, 1);
-//        }
     }
 
     @Override

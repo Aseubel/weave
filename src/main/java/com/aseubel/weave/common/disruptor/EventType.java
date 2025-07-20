@@ -17,5 +17,10 @@ public enum EventType {
     POST_LIKE,
     POST_UNLIKE,
     POST_COMMENT,
-    POST_TOP
+    POST_TOP,
+
+    COMMENT_LIKE,
+    COMMENT_UNLIKE,
+    COMMENT_REPLY,
+    COMMENT_DELETE,
 }

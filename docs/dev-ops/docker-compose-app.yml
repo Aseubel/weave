@@ -1,0 +1,35 @@
+# /usr/local/bin/docker-compose -f /docs/dev-ops/environment/environment-docker-compose-2.4.yml up -d
+version: '3.3'
+# docker-compose -f docker-compose-app.yml up -d
+# 你需要修改system为你自身系统的仓库名
+services:
+  weave:
+    image: sha256:8135e1509420cdcd5122bd8e1115b5f7926a5dacdadd860631569f82a6e31d80
+    container_name: weave
+    restart: on-failure
+    ports:
+      - "20611:20611"
+    environment:
+      - TZ=PRC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/weave?serverTimezone=UTC&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Shanghai
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_HIKARI_POOL_NAME=Retail_HikariCP
+      - SERVER_PORT=20611
+      - OSS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
+      - OSS_ACCESS_KEY_SECRET=YOUR_ACCESS_KEY_SECRET
+    volumes:
+      - ./log:/data/log
+      - /home/apt:/etc/apt
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge

@@ -56,6 +56,7 @@ class WeaveApplicationTests {
         user = userRepository.findById(user.getId()).get();
         user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
         userRepository.save(user);
+        userRepository.delete(user);
     }
 
 }

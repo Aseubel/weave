@@ -19,6 +19,8 @@ services:
       - SERVER_PORT=20611
       - OSS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
       - OSS_ACCESS_KEY_SECRET=YOUR_ACCESS_KEY_SECRET
+      - JWT_SECRET=YOUR_JWT_SECRET
+      - APP_PASSWORD=Weave123456
     volumes:
       - ./log:/data/log
       - /home/apt:/etc/apt

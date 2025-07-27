@@ -35,15 +35,6 @@ jobs:
       - name: login to aliyun container registry
         run: docker login --username="${{ secrets.ALIYUN_USERNAME }}" --password="${{ secrets.ALIYUN_PASSWORD }}"  "$REGISTRY/$NAMESPACE/$IMAGE:$TAG"
 
-        # 1.2 Cache Maven dependencies
-      - name: Cache Maven dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-                   ${{ runner.os }}-maven-
-
       # 1.3 Build and push image to ACR
       - name: Build and push image to ACR
         run: |

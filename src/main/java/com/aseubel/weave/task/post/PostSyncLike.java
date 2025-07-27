@@ -21,7 +21,7 @@ import static com.aseubel.weave.redis.LuaScript.HASH_GET_REMOVE_SCRIPT;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SyncLike {
+public class PostSyncLike {
 
     private final PostRepository postRepository;
     private final StringRedisTemplate redisTemplate;

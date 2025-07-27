@@ -44,12 +44,12 @@ services(){
 
 # 关闭服务模块
 stop(){
-  docker stop autogo
+  docker stop weave
 }
 
 # 删除服务模块
 rm(){
-  docker rm autogo
+  docker rm weave
 }
 
 # 删除所有未使用的镜像

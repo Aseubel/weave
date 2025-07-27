@@ -4,8 +4,8 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
-    # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-    # You can manually trigger a workflow run by clicking on the "Actions" tab in the repository, then selecting the workflow and clicking on the "Run workflow" button.
+  # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  # You can manually trigger a workflow run by clicking on the "Actions" tab in the repository, then selecting the workflow and clicking on the "Run workflow" button.
 
 # Environment variables available to all jobs and steps in this workflow.
 env:
@@ -34,6 +34,15 @@ jobs:
       # 1.2 登录阿里云 Container Registry
       - name: login to aliyun container registry
         run: docker login --username="${{ secrets.ALIYUN_USERNAME }}" --password="${{ secrets.ALIYUN_PASSWORD }}"  "$REGISTRY/$NAMESPACE/$IMAGE:$TAG"
+
+        # 1.2 Cache Maven dependencies
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+                   ${{ runner.os }}-maven-
 
       # 1.3 Build and push image to ACR
       - name: Build and push image to ACR

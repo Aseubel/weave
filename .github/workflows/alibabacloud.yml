@@ -10,7 +10,7 @@ on:
 # Environment variables available to all jobs and steps in this workflow.
 env:
   REGION_ID: cn-guangzhou
-  REGISTRY: registry.cn-guangzhou.aliyuncs.com
+  REGISTRY: crpi-5tzwiznwaw34lfca.cn-guangzhou.personal.cr.aliyuncs.com
   NAMESPACE: aseubel
   IMAGE: weave
   TAG: ${{ github.sha }}

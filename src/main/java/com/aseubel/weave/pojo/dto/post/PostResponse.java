@@ -1,5 +1,6 @@
 package com.aseubel.weave.pojo.dto.post;
 
+import com.aseubel.weave.pojo.entity.Image;
 import com.aseubel.weave.pojo.entity.post.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -21,4 +21,11 @@ public class RedisKey {
     public static final String COMMENT_VIEW_COUNT_KEY = "comment:view:count:";
     public static final String COMMENT_COMMENT_COUNT_KEY = "comment:comment:count:";
     public static final String COMMENT_LIKE_STATUS_KEY = "comment:like:status:";
+
+    public static final String SUBMISSION_VOTE_RECENT_KEY = "submission:vote:recent";
+    public static final String SUBMISSION_VOTE_COUNT_KEY = "submission:vote:count";
+    public static final String SUBMISSION_VIEW_COUNT_KEY = "submission:view:count:";
+    public static final String SUBMISSION_COMMENT_COUNT_KEY = "submission:comment:count:";
+    public static final String SUBMISSION_VOTE_STATUS_KEY = "submission:vote:status:";
+
 }

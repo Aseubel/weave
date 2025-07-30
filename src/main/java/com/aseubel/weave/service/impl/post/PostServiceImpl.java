@@ -309,7 +309,7 @@ public class PostServiceImpl implements PostService {
                 .id(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
-                .avatar(user.getAvatar())
+                .avatar(Optional.ofNullable(user.getAvatar()).map(Image::getImageUrl).orElse(null))
                 .level(user.getLevel())
                 .isActive(user.getIsActive())
                 .build();

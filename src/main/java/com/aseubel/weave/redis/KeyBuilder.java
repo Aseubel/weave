@@ -53,7 +53,35 @@ public class KeyBuilder {
     /**
      * set 记录点赞的用户
      */
-    public static String commentLikeStatusKey(Long postId) {
-        return APP + COMMENT_LIKE_STATUS_KEY + postId;
+    public static String commentLikeStatusKey(Long commentId) {
+        return APP + COMMENT_LIKE_STATUS_KEY + commentId;
+    }
+
+    /**
+     * set
+     */
+    public static String submissionVoteRecentKey() {
+        return APP + SUBMISSION_VOTE_RECENT_KEY;
+    }
+
+    /**
+     * map 记录点赞数的增量
+     */
+    public static String submissionVoteCountKey() {
+        return APP + SUBMISSION_VOTE_COUNT_KEY;
+    }
+
+    /**
+     * map 记录当天用户给比赛投票票数
+     * competitionId -> (userId, count)
+     */
+    public static String competitionVoteStatusKey(Long competitionId) {
+        return APP + SUBMISSION_VOTE_STATUS_KEY + competitionId;
+    }
+    /**
+     * 用于清除该key的无参方法
+     */
+    public static String competitionVoteStatusKey() {
+        return APP + SUBMISSION_VOTE_STATUS_KEY;
     }
 }

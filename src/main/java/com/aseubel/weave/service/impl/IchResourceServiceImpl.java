@@ -192,7 +192,7 @@ public class IchResourceServiceImpl implements IchResourceService {
                         .id(resource.getUploader().getId())
                         .username(resource.getUploader().getUsername())
                         .nickname(resource.getUploader().getNickname())
-                        .avatar(resource.getUploader().getAvatar())
+                        .avatar(resource.getUploader().getAvatar().getImageUrl())
                         .build())
                 .createdAt(resource.getCreatedAt())
                 .updatedAt(resource.getUpdatedAt())

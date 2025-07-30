@@ -34,4 +34,7 @@ public abstract class BaseEntity implements Serializable {
     @LastModifiedDate // 实体更新时自动填充
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    private Boolean deleted = false;
+
 }

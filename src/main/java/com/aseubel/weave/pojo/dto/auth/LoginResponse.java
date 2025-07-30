@@ -1,10 +1,13 @@
 package com.aseubel.weave.pojo.dto.auth;
 
+import com.aseubel.weave.pojo.entity.Image;
 import com.aseubel.weave.pojo.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Optional;
 
 /**
  * 登录响应DTO
@@ -67,7 +70,7 @@ public class LoginResponse {
                 .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
-                .avatarUrl(user.getAvatar())
+                .avatarUrl(Optional.ofNullable(user.getAvatar()).map(Image::getImageUrl).orElse(null))
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .accessTokenExpiration(accessTokenExpiration)

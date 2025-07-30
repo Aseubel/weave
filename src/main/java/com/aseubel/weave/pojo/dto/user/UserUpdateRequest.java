@@ -41,6 +41,5 @@ public class UserUpdateRequest {
 
     private Set<Long> interestTagIds; // 兴趣标签ID集合
 
-    @Size(max = 500, message = "头像URL不能超过500个字符")
-    private String avatar; // 头像URL
+    private Long avatarId; // 头像id
 }

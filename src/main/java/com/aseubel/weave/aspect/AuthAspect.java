@@ -1,4 +1,4 @@
-package com.aseubel.weave.common.aspect;
+package com.aseubel.weave.aspect;
 
 import com.aseubel.weave.common.annotation.constraint.RequireLogin;
 import com.aseubel.weave.common.annotation.constraint.RequirePermission;

@@ -30,10 +30,21 @@ spring:
           min-idle: 0
           max-wait: -1ms
 
+# 线程池配置
+thread:
+  pool:
+    executor:
+      config:
+        core-pool-size: 10
+        max-pool-size: 200
+        keep-alive-time: 10
+        block-queue-size: 5000
+        policy: CallerRunsPolicy
+
 # JWT配置
 jwt:
   secret: 4ligUANwjrxTBFxYesepp/sd32D5S4Igz7FwNDmfItPgNu8aCxnrCVe5LZebisL6J3jtGLMZF+aGDnM6vjPLFA==
-  access-token-expiration: 1800000 # 30分钟 (毫秒)
+  access-token-expiration: 5200000 # 120分钟 (毫秒)
   refresh-token-expiration: 604800000 # 7天 (毫秒)
 
 # 第三方登录配置
@@ -58,6 +69,9 @@ sms:
 # 应用配置
 app:
   password: Weave123456 # 默认账户密码
+  competition:
+    vote:
+      limit: 3 # 单个用户每天每个比赛的投票次数限制
 
 # 日志
 logging:

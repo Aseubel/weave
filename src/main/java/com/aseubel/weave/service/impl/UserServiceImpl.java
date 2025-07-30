@@ -1,8 +1,11 @@
 package com.aseubel.weave.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.aseubel.weave.common.exception.BusinessException;
+import com.aseubel.weave.pojo.entity.Image;
+import com.aseubel.weave.pojo.entity.user.Role;
 import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.common.util.JwtUtil;
 import com.aseubel.weave.common.util.SensitiveDataUtil;
@@ -151,7 +154,7 @@ public class UserServiceImpl implements UserService {
                         User newUser = User.builder()
                                 .wechatOpenId(openId)
                                 .nickname(nickname)
-                                .avatar(avatarUrl)
+                                .avatar(new Image(avatarUrl))
                                 .username("wechat_" + openId.substring(0, 8))
                                 .build();
                         return userRepository.save(newUser);
@@ -171,7 +174,7 @@ public class UserServiceImpl implements UserService {
                         User newUser = User.builder()
                                 .qqOpenId(openId)
                                 .nickname(nickname)
-                                .avatar(avatarUrl)
+                                .avatar(new Image(avatarUrl))
                                 .username("qq_" + openId.substring(0, 8))
                                 .build();
                         return userRepository.save(newUser);
@@ -418,7 +421,7 @@ public class UserServiceImpl implements UserService {
 
         // 构建角色信息
         Set<String> roleNames = user.getRoles().stream()
-                .map(role -> role.getName())
+                .map(Role::getName)
                 .collect(Collectors.toSet());
 
         // 构建兴趣标签信息
@@ -486,8 +489,8 @@ public class UserServiceImpl implements UserService {
             }
             user.setMobile(request.getMobile());
         }
-        if (StringUtils.hasText(request.getAvatar())) {
-            user.setAvatar(request.getAvatar());
+        if (ObjectUtil.isNotEmpty(request.getAvatarId())) {
+            user.setAvatar(new Image(request.getAvatarId()));
         }
 
         // 更新兴趣标签

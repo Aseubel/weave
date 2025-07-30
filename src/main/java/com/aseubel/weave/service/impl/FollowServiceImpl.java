@@ -5,6 +5,7 @@ import com.aseubel.weave.context.UserContext;
 import com.aseubel.weave.pojo.dto.common.PageResponse;
 import com.aseubel.weave.pojo.dto.user.UserResponse;
 import com.aseubel.weave.pojo.entity.Follow;
+import com.aseubel.weave.pojo.entity.Image;
 import com.aseubel.weave.pojo.entity.user.User;
 import com.aseubel.weave.repository.FollowRepository;
 import com.aseubel.weave.repository.UserRepository;
@@ -300,7 +301,7 @@ public class FollowServiceImpl implements FollowService {
                                 .id(user.getId())
                                 .username(user.getUsername())
                                 .nickname(user.getNickname())
-                                .avatar(user.getAvatar())
+                                .avatar(Optional.ofNullable(user.getAvatar()).map(Image::getImageUrl).orElse(null))
                                 .email(user.getEmail())
                                 .phone(user.getMobile())
                                 .bio(user.getBio())

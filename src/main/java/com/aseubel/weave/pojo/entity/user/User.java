@@ -2,6 +2,9 @@ package com.aseubel.weave.pojo.entity.user;
 
 
 import com.aseubel.weave.pojo.entity.BaseEntity;
+import com.aseubel.weave.pojo.entity.Image;
+import com.aseubel.weave.pojo.entity.competition.Participant;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -36,8 +39,9 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String nickname; // 昵称
 
-    @Column
-    private String avatar; // 头像链接
+    @OneToOne
+    @JoinColumn(name = "avatar_id")
+    private Image avatar; // 头像链接
 
     @Column(unique = true, length = 20)
     private String mobile; // 手机号

@@ -1,5 +1,6 @@
 package com.aseubel.weave.pojo.dto.comment;
 
+import com.aseubel.weave.pojo.entity.Image;
 import com.aseubel.weave.pojo.entity.comment.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,7 +55,7 @@ public class CommentResponse {
         private Long id;
         private String username;
         private String nickname;
-        private String avatar;
+        private Image avatar;
         private Integer level;
     }
 

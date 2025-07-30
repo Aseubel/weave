@@ -1,6 +1,7 @@
 package com.aseubel.weave.pojo.dto.ich;
 
 import com.aseubel.weave.common.annotation.FieldDesc;
+import com.aseubel.weave.pojo.entity.Image;
 import com.aseubel.weave.pojo.entity.ich.ResourceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

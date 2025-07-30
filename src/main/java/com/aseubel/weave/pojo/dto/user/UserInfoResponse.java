@@ -1,5 +1,6 @@
 package com.aseubel.weave.pojo.dto.user;
 
+import com.aseubel.weave.pojo.entity.Image;
 import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ public class UserInfoResponse {
     private String profession; // 职业
     private String email; // 邮箱
     private String mobile; // 手机号（脱敏）
-    private String avatar; // 头像URL
+    private Image avatar; // 头像
     private Long points; // 积分
     private Integer level; // 等级
     private LocalDateTime createTime; // 注册时间

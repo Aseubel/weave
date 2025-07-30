@@ -38,6 +38,7 @@ public class Submission extends BaseEntity implements Serializable {
     @Column(nullable = false, updatable = false)
     private LocalDateTime submissionTime = LocalDateTime.now(); // 提交时间
 
+    @Builder.Default
     private int voteCount = 0; // 作品获得的票数，默认为0
 
     // 多份作品可以属于同一个比赛

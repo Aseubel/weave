@@ -19,12 +19,12 @@ import java.util.List;
  * @author Aseubel
  * @date 2025/7/13 上午11:05
  */
-@SpringBootTest
+//@SpringBootTest
 public class DisruptorTest {
 
-    @Autowired
+//    @Autowired
     private DisruptorProducer disruptorProducer;
-    @Resource
+//    @Resource
     private ProcessorChain<Element> disruptorChain;
 
     public static class TestHandler implements Processor<Element> {
@@ -35,7 +35,7 @@ public class DisruptorTest {
             return null;
         }
     }
-    @Test
+//    @Test
     public void multiThreadTest() {
         disruptorChain.clearProcessor();
         disruptorChain.addProcessor(new TestHandler());

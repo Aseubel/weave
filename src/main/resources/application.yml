@@ -2,4 +2,4 @@ spring:
   config:
     name: weave
   profiles:
-    active: dev
+    active: pro

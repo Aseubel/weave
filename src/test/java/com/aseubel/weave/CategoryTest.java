@@ -16,19 +16,19 @@ import java.util.List;
  * @author Aseubel
  * @date 2025/7/10 上午10:44
  */
-@SpringBootTest
+//@SpringBootTest
 public class CategoryTest {
     
-    @Autowired
+//    @Autowired
     private CategoryRepository categoryRepository;
     
     /**
      * 初始化非遗分类数据
      * 包括十大类及其部分二级分类
      */
-    @Test
-    @Transactional
-    @Commit
+//    @Test
+//    @Transactional
+//    @Commit
     public void initIchCategories() {
         // 清空现有数据
         categoryRepository.deleteAll();

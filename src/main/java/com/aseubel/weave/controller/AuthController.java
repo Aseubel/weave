@@ -112,10 +112,10 @@ public class AuthController {
     }
 
     /**
-     * 发送短信验证码
+     * 发送短信验证码 todo 暂时直接返回验证码便于测试，后续需要改为发送短信
      */
     @PostMapping("/send-sms-code")
-    public ApiResponse<Void> sendSmsCode(@RequestBody SmsRequest request) {
+    public ApiResponse<String> sendSmsCode(@RequestBody SmsRequest request) {
         try {
             String mobile = request.getMobile();
 
@@ -128,8 +128,8 @@ public class AuthController {
                 return ApiResponse.badRequest("手机号格式不正确");
             }
 
-            userService.sendSmsCode(mobile);
-            return ApiResponse.success("验证码发送成功", null);
+            String code = userService.sendSmsCode(mobile);
+            return ApiResponse.success("验证码发送成功", code);
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }

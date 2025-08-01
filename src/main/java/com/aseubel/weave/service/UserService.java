@@ -57,7 +57,7 @@ public interface UserService {
     /**
      * 发送短信验证码
      */
-    void sendSmsCode(String mobile);
+    String sendSmsCode(String mobile);
 
     /**
      * 验证短信验证码

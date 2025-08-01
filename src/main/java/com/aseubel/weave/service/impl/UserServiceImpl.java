@@ -246,7 +246,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendSmsCode(String mobile) {
+    public String sendSmsCode(String mobile) {
         // 生成6位数字验证码
         String code = RandomUtil.randomNumbers(6);
 
@@ -257,6 +257,7 @@ public class UserServiceImpl implements UserService {
         // 这里应该调用短信服务发送验证码
         // 为了演示，我们只是记录日志
         log.info("发送短信验证码到 {}: {}", mobile, code);
+        return code;
 
         // TODO 实际项目中应该调用阿里云、腾讯云等短信服务
         // sendSmsViaSmsProvider(mobile, code, type);

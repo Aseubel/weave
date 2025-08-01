@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
                         User newUser = User.builder()
                                 .wechatOpenId(openId)
                                 .nickname(nickname)
-                                .avatar(new Image(avatarUrl))
+                                .avatar(Image.builder().imageUrl(avatarUrl).build())
                                 .username("wechat_" + openId.substring(0, 8))
                                 .build();
                         return userRepository.save(newUser);
@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserService {
                         User newUser = User.builder()
                                 .qqOpenId(openId)
                                 .nickname(nickname)
-                                .avatar(new Image(avatarUrl))
+                                .avatar(Image.builder().imageUrl(avatarUrl).build())
                                 .username("qq_" + openId.substring(0, 8))
                                 .build();
                         return userRepository.save(newUser);
@@ -490,7 +490,7 @@ public class UserServiceImpl implements UserService {
             user.setMobile(request.getMobile());
         }
         if (ObjectUtil.isNotEmpty(request.getAvatarId())) {
-            user.setAvatar(new Image(request.getAvatarId()));
+            user.setAvatar(Image.builder().id(request.getAvatarId()).build());
         }
 
         // 更新兴趣标签

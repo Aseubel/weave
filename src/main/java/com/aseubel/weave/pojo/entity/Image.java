@@ -1,14 +1,13 @@
 package com.aseubel.weave.pojo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static com.aseubel.weave.common.Constant.*;
@@ -27,7 +26,14 @@ import static com.aseubel.weave.common.Constant.*;
 @DynamicInsert
 @Entity
 @Table(name = "image")
-public class Image extends BaseEntity {
+public class Image {
+
+    @Id
+    @Column(name = "id", nullable = false, unique = true)
+    private String id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "uploader_id", nullable = false)
     private Long uploader;
@@ -35,16 +41,13 @@ public class Image extends BaseEntity {
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
+    @CreatedDate
+    @Column(name = "upload_time", updatable = false)
+    @Builder.Default
+    private LocalDateTime uploadTime = LocalDateTime.now();
+
     @Transient
     private MultipartFile image;
-
-    public Image(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public Image(Long id) {
-        super.setId(id);
-    }
 
     /**
      * 获取在OSS中的文件名称（在类型文件夹下）
@@ -52,7 +55,7 @@ public class Image extends BaseEntity {
     public String imageObjectName() {
         StringBuilder objectName = new StringBuilder();
         objectName.append(APP).append("/")
-                .append(super.getId())
+                .append(id)
                 .append(Objects.requireNonNull(image.getOriginalFilename()).substring(image.getOriginalFilename().lastIndexOf(".")));
         return objectName.toString();
     }

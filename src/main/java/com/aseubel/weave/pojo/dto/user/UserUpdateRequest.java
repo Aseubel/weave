@@ -41,5 +41,5 @@ public class UserUpdateRequest {
 
     private Set<Long> interestTagIds; // 兴趣标签ID集合
 
-    private Long avatarId; // 头像id
+    private String avatarId; // 头像id
 }

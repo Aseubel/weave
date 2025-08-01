@@ -10,6 +10,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -181,5 +183,33 @@ public class GlobalExceptionHandler {
         result.put("message", "系统异常，请联系管理员");
         result.put("timestamp", System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+    }
+
+    /**
+     * 处理上传文件大小超出限制异常
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        log.warn("上传文件大小超出限制: {}", e.getMessage());
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", false);
+        result.put("code", 400);
+        result.put("message", "上传文件大小超出限制");
+        result.put("timestamp", System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
+
+    /**
+     * 处理请求路径不存在异常
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNoHandlerFoundException(NoHandlerFoundException e) {
+        log.warn("请求路径不存在: {}", e.getMessage());
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", false);
+        result.put("code", 404);
+        result.put("message", "请求路径不存在");
+        result.put("timestamp", System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
     }
 }

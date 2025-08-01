@@ -39,7 +39,7 @@ public class CompetitionServiceImpl implements CompetitionService {
     private final StringRedisTemplate redisTemplate;
     private final DisruptorProducer disruptorProducer;
 
-    @Value("${app.competition.vote.limit:3}")
+    @Value("${app.competition-vote-limit:3}")
     private Long voteLimit;
 
     @Resource

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author Aseubel
@@ -17,15 +18,18 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImageResponse implements Serializable {
-    private Long imageId;
 
+    private String imageName;
+    private String imageId;
     private String imageUrl;
-
+    private LocalDateTime uploadTime;
     private byte[] image;
 
     public ImageResponse(Image image) throws IOException {
         this.imageId = image.getId();
         this.imageUrl = image.getImageUrl();
 //        this.image = image.getImage().getBytes();
+        this.imageName = image.getName();
+        this.uploadTime = image.getUploadTime();
     }
 }

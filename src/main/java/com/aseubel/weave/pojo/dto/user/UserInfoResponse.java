@@ -1,5 +1,7 @@
 package com.aseubel.weave.pojo.dto.user;
 
+import com.aseubel.weave.common.annotation.Desensitization;
+import com.aseubel.weave.common.desensitize.DesensitizationTypeEnum;
 import com.aseubel.weave.pojo.entity.Image;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +27,9 @@ public class UserInfoResponse {
     private String gender; // 性别
     private String city; // 城市
     private String profession; // 职业
+    @Desensitization(type = DesensitizationTypeEnum.EMAIL)
     private String email; // 邮箱
+    @Desensitization(type = DesensitizationTypeEnum.MOBILE)
     private String mobile; // 手机号（脱敏）
     private Image avatar; // 头像
     private Long points; // 积分

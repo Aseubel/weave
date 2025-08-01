@@ -1,5 +1,7 @@
 package com.aseubel.weave.pojo.dto.user;
 
+import com.aseubel.weave.common.annotation.Desensitization;
+import com.aseubel.weave.common.desensitize.DesensitizationTypeEnum;
 import com.aseubel.weave.pojo.entity.Image;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -49,11 +51,13 @@ public class UserResponse {
     /**
      * 邮箱
      */
+    @Desensitization(type = DesensitizationTypeEnum.EMAIL)
     private String email;
 
     /**
      * 手机号
      */
+    @Desensitization(type = DesensitizationTypeEnum.MOBILE)
     private String phone;
 
     /**

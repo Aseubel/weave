@@ -1,6 +1,8 @@
 package com.aseubel.weave.pojo.entity.user;
 
 
+import com.aseubel.weave.common.annotation.Desensitization;
+import com.aseubel.weave.common.desensitize.DesensitizationTypeEnum;
 import com.aseubel.weave.pojo.entity.BaseEntity;
 import com.aseubel.weave.pojo.entity.Image;
 import com.aseubel.weave.pojo.entity.competition.Participant;
@@ -44,6 +46,7 @@ public class User extends BaseEntity {
     private Image avatar; // 头像链接
 
     @Column(unique = true, length = 20)
+    @Desensitization(type = DesensitizationTypeEnum.MOBILE)
     private String mobile; // 手机号
 
     @Column(length = 100)
@@ -53,9 +56,11 @@ public class User extends BaseEntity {
     private String qqOpenId; // QQ OpenID
 
     @Column(length = 50)
+    @Desensitization(type = DesensitizationTypeEnum.NAME)
     private String realName; // 真实姓名 (用于实名认证)
 
     @Column(length = 20)
+    @Desensitization(type = DesensitizationTypeEnum.ID_CARD)
     private String idCardNumber; // 身份证号 (加密存储)
 
     @Column(length = 500)
@@ -74,6 +79,7 @@ public class User extends BaseEntity {
     private String profession; // 职业
 
     @Column(length = 100)
+    @Desensitization(type = DesensitizationTypeEnum.EMAIL)
     private String email; // 邮箱
 
     @Builder.Default

@@ -4,23 +4,18 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.aseubel.weave.common.exception.BusinessException;
-import com.aseubel.weave.pojo.entity.Image;
-import com.aseubel.weave.pojo.entity.user.Role;
-import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.common.util.JwtUtil;
-import com.aseubel.weave.common.util.SensitiveDataUtil;
-import com.aseubel.weave.pojo.dto.auth.ChangePasswordRequest;
-import com.aseubel.weave.pojo.dto.auth.LoginRequest;
-import com.aseubel.weave.pojo.dto.auth.LoginResponse;
-import com.aseubel.weave.pojo.dto.auth.MobileLoginRequest;
-import com.aseubel.weave.pojo.dto.auth.RegisterRequest;
+import com.aseubel.weave.pojo.dto.auth.*;
 import com.aseubel.weave.pojo.dto.common.PageResponse;
 import com.aseubel.weave.pojo.dto.common.ThirdPartyLoginRequest;
 import com.aseubel.weave.pojo.dto.user.UserInfoResponse;
 import com.aseubel.weave.pojo.dto.user.UserUpdateRequest;
+import com.aseubel.weave.pojo.entity.Image;
 import com.aseubel.weave.pojo.entity.user.CheckInStats;
 import com.aseubel.weave.pojo.entity.user.InterestTag;
+import com.aseubel.weave.pojo.entity.user.Role;
 import com.aseubel.weave.pojo.entity.user.User;
+import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.repository.CheckInRepository;
 import com.aseubel.weave.repository.CheckInStatsRepository;
 import com.aseubel.weave.repository.InterestTagRepository;
@@ -444,7 +439,7 @@ public class UserServiceImpl implements UserService {
                 .city(user.getCity())
                 .profession(user.getProfession())
                 .email(user.getEmail())
-                .mobile(SensitiveDataUtil.maskMobile(user.getMobile()))
+                .mobile(user.getMobile())
                 .avatar(user.getAvatar())
                 .points(user.getPoints())
                 .level(user.getLevel())

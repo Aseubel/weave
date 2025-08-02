@@ -13,7 +13,6 @@ import java.util.Optional;
  * @author Aseubel
  * @date 2025/6/29
  */
-@Repository
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
     /**

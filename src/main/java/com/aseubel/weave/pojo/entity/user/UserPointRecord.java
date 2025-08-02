@@ -1,7 +1,6 @@
-package com.aseubel.weave.pojo.refer;
+package com.aseubel.weave.pojo.entity.user;
 
 import com.aseubel.weave.pojo.entity.BaseEntity;
-import com.aseubel.weave.pojo.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "user_points_record")
-public class UserPointsRecord extends BaseEntity {
+public class UserPointRecord extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

@@ -32,8 +32,8 @@ public class PostProcessor implements Processor<Element> {
             case POST_UNLIKE -> handlePostUnlike(data);
             case POST_COMMENT -> handlePostComment(data);
             case POST_TOP -> handlePostTop(data);
-            default -> chain.process(data, index + 1);
         }
+        chain.process(data, index + 1);
         return null;
     }
 

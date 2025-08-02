@@ -14,7 +14,6 @@ import java.util.Optional;
  * @author Aseubel
  * @date 2025/7/8
  */
-@Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     /**

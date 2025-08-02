@@ -13,7 +13,6 @@ import java.util.Optional;
  * @author Aseubel
  * @date 2025/7/13
  */
-@Repository
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {
 
     /**

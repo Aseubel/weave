@@ -17,7 +17,6 @@ import java.util.List;
  * @author Aseubel
  * @date 2025/7/8
  */
-@Repository
 public interface IchResourceRepository extends JpaRepository<IchResource, Long> {
 
     /**

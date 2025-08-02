@@ -29,12 +29,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +65,7 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, Object> redisTemplate;
     private final WebClient.Builder webClientBuilder;
+    private final ThreadPoolTaskExecutor threadPoolExecutor;
 
     @Value("${jwt.access-token-expiration}")
     private Long accessTokenExpiration;
@@ -102,6 +105,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("用户名或密码错误");
         }
 
+        updateLastLoginTime(user);
         return generateTokenResponse(user);
     }
 
@@ -126,6 +130,8 @@ public class UserServiceImpl implements UserService {
                     return userRepository.save(newUser);
                 });
 
+        updateLastLoginTime(user);
+
         return generateTokenResponse(user);
     }
 
@@ -135,6 +141,7 @@ public class UserServiceImpl implements UserService {
         String openId;
         String nickname;
         String avatarUrl;
+        User user = null;
 
         if (WECHAT.equals(request.getType())) {
             // 微信登录逻辑
@@ -144,7 +151,7 @@ public class UserServiceImpl implements UserService {
             avatarUrl = wechatUserInfo.getHeadimgurl();
 
             // 查找或创建用户
-            User user = userRepository.findByWechatOpenId(openId)
+            user = userRepository.findByWechatOpenId(openId)
                     .orElseGet(() -> {
                         User newUser = User.builder()
                                 .wechatOpenId(openId)
@@ -154,8 +161,6 @@ public class UserServiceImpl implements UserService {
                                 .build();
                         return userRepository.save(newUser);
                     });
-
-            return generateTokenResponse(user);
         } else if (QQ.equals(request.getType())) {
             // QQ登录逻辑
             QQUserInfo qqUserInfo = getQQUserInfo(request.getCode());
@@ -164,7 +169,7 @@ public class UserServiceImpl implements UserService {
             avatarUrl = qqUserInfo.getFigureurl_qq_1();
 
             // 查找或创建用户
-            User user = userRepository.findByQqOpenId(openId)
+            user = userRepository.findByQqOpenId(openId)
                     .orElseGet(() -> {
                         User newUser = User.builder()
                                 .qqOpenId(openId)
@@ -174,11 +179,11 @@ public class UserServiceImpl implements UserService {
                                 .build();
                         return userRepository.save(newUser);
                     });
-
-            return generateTokenResponse(user);
         } else {
             throw new RuntimeException("不支持的第三方平台");
         }
+        updateLastLoginTime(user);
+        return generateTokenResponse(user);
     }
 
     @Override
@@ -563,5 +568,10 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info("用户 {} 状态已更新为: {}", user.getUsername(), user.getIsActive() ? "启用" : "禁用");
+    }
+
+    private void updateLastLoginTime(User user) {
+        user.setLastLoginTime(LocalDateTime.now());
+        userRepository.save(user);
     }
 }

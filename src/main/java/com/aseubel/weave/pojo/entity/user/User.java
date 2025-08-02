@@ -112,4 +112,13 @@ public class User extends BaseEntity {
     )
     @ToString.Exclude
     private Set<InterestTag> interestTags;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_badge",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "badge_id")
+    )
+    @ToString.Exclude
+    private Set<Badge> badges;
 }

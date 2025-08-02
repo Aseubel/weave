@@ -16,7 +16,6 @@ import java.util.Optional;
  * @author Aseubel
  * @date 2025/6/29
  */
-@Repository
 public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
 
     /**

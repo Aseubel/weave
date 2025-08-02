@@ -30,8 +30,8 @@ public class CommentProcessor implements Processor<Element> {
         switch (eventType) {
             case COMMENT_LIKE -> handleCommentLike(data);
             case COMMENT_UNLIKE -> handleCommentUnlike(data);
-            default -> chain.process(data, index + 1);
         }
+        chain.process(data, index + 1);
         return null;
     }
 

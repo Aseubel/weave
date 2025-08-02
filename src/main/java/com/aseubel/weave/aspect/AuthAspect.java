@@ -2,6 +2,7 @@ package com.aseubel.weave.aspect;
 
 import com.aseubel.weave.common.annotation.constraint.RequireLogin;
 import com.aseubel.weave.common.annotation.constraint.RequirePermission;
+import com.aseubel.weave.common.exception.AuthenticationException;
 import com.aseubel.weave.common.exception.BusinessException;
 import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.common.util.JwtUtil;
@@ -56,7 +57,7 @@ public class AuthAspect {
 //        if (requireLogin != null && requireLogin.value()) {
             User currentUser = getCurrentUser();
             if (currentUser == null) {
-                throw new BusinessException(400, "用户未登录或登录已过期");
+                throw new AuthenticationException("用户未登录或登录已过期");
             }
             // 将当前用户信息存储到ThreadLocal中，供后续使用
             UserContext.setCurrentUser(currentUser);

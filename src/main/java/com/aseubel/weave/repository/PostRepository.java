@@ -18,7 +18,6 @@ import java.util.List;
  * @author Aseubel
  * @date 2025/6/29
  */
-@Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     /**

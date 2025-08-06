@@ -15,20 +15,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update #自动更新数据库表结构，默认none、可选值none、create、create-drop、validate、update
-  # Redis配置
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password: # Redis密码，如果没有设置密码则留空
-      database: 0
-      timeout: 5000ms
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: -1ms
   servlet:
     multipart:
       enabled: true
@@ -45,6 +31,21 @@ thread:
         keep-alive-time: 10
         block-queue-size: 5000
         policy: CallerRunsPolicy
+
+#Redis 配置
+redis:
+  sdk:
+    config:
+      host: 127.0.0.1
+      port: 6379
+      pool-size: 10
+      min-idle-size: 5
+      idle-timeout: 30000
+      connect-timeout: 5000
+      retry-attempts: 3
+      retry-interval: 1000
+      ping-interval: 60000
+      keep-alive: true
 
 # JWT配置
 jwt:

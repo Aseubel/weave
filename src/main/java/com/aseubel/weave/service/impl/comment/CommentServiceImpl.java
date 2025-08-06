@@ -12,8 +12,8 @@ import com.aseubel.weave.pojo.entity.comment.Comment;
 import com.aseubel.weave.pojo.entity.comment.CommentLike;
 import com.aseubel.weave.pojo.entity.ich.IchResource;
 import com.aseubel.weave.pojo.entity.post.Post;
-import com.aseubel.weave.pojo.entity.post.PostLike;
 import com.aseubel.weave.pojo.entity.user.User;
+import com.aseubel.weave.redis.IRedisService;
 import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.repository.*;
 import com.aseubel.weave.service.CommentService;
@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final IchResourceRepository ichResourceRepository;
-    private final StringRedisTemplate redisTemplate;
+    private final IRedisService redisService;
     private final CommentLikeRepository commentLikeRepository;
     private final DisruptorProducer disruptorProducer;
 
@@ -165,18 +164,18 @@ public class CommentServiceImpl implements CommentService {
         User currentUser = UserContext.getCurrentUser();
         Comment comment = getCommentEntity(commentId);
 
-        Long userId = currentUser.getId();
+        String userId = String.valueOf(currentUser.getId());
         Boolean isLiked;
 
-        redisTemplate.opsForSet().add(KeyBuilder.postLikeRecentKey(), String.valueOf(userId));
+        redisService.addToSet(KeyBuilder.commentLikeRecentKey(), userId);
         if ((isLiked = isLiked(commentId, userId)) == null) {
             isLiked = commentLikeRepository.findByUserAndComment(currentUser, comment).isPresent();
-            redisTemplate.opsForHash().put(KeyBuilder.postLikeStatusKey(commentId), userId, isLiked);
+            redisService.addToMap(KeyBuilder.postLikeStatusKey(commentId), userId, isLiked);
         }
         if (isLiked) {
             // 取消点赞
-            redisTemplate.opsForHash().put(KeyBuilder.commentLikeStatusKey(commentId), userId, false);
-            redisTemplate.opsForHash().increment(KeyBuilder.commentLikeCountKey(), commentId, -1);
+            redisService.addToMap(KeyBuilder.commentLikeStatusKey(commentId), userId, false);
+            redisService.incrMap(KeyBuilder.commentLikeCountKey(), String.valueOf(commentId), -1);
 
             CommentLike commentLike = CommentLike.builder()
                     .user(currentUser)
@@ -186,8 +185,8 @@ public class CommentServiceImpl implements CommentService {
             disruptorProducer.publish(commentLike, EventType.COMMENT_UNLIKE);
         } else {
             // 点赞
-            redisTemplate.opsForHash().put(KeyBuilder.commentLikeStatusKey(commentId), userId, true);
-            redisTemplate.opsForHash().increment(KeyBuilder.commentLikeCountKey(), commentId, 1);
+            redisService.addToMap(KeyBuilder.commentLikeStatusKey(commentId), userId, true);
+            redisService.incrMap(KeyBuilder.commentLikeCountKey(), String.valueOf(commentId), 1);
 
             CommentLike commentLike = CommentLike.builder()
                     .user(currentUser)
@@ -227,13 +226,13 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new BusinessException("评论不存在"));
     }
 
-    private Boolean isLiked(Long commentId, Long userId) {
-        return redisTemplate.opsForSet().isMember(KeyBuilder.commentLikeStatusKey(commentId), userId);
+    private Boolean isLiked(Long commentId, String userId) {
+        return redisService.getFromMap(KeyBuilder.commentLikeStatusKey(commentId), userId);
     }
 
     private CommentResponse convertToCommentResponse(Comment comment, User currentUser) {
         // 当前用户是否点赞
-        Boolean isLiked = isLiked(comment.getId(), currentUser.getId());
+        Boolean isLiked = isLiked(comment.getId(), currentUser.getId().toString());
 
         // 获取回复列表
         List<Comment> replies = commentRepository.findByParentAndStatusOrderByCreatedAtAsc(

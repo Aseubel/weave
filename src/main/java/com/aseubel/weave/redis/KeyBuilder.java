@@ -30,7 +30,7 @@ public class KeyBuilder {
     }
 
     /**
-     * set 记录点赞的用户
+     * set 记录点赞的用户对该帖子的点赞状态
      */
     public static String postLikeStatusKey(Long postId) {
         return APP + POST_LIKE_STATUS_KEY + postId;

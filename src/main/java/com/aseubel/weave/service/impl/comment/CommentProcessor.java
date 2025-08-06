@@ -37,13 +37,14 @@ public class CommentProcessor implements Processor<Element> {
 
     private void handleCommentLike(Element data) {
         CommentLike commentLike = getCommentLike(data);
-        commentLikeRepository.save(commentLike);
-        commentRepository.updateLikeCount(commentLike.getComment().getId(), 1L);
+        if (commentLikeRepository.findByUserAndComment(commentLike.getUser(), commentLike.getComment()).isEmpty()){
+            commentLikeRepository.save(commentLike);
+        }
     }
 
     private void handleCommentUnlike(Element data) {
         CommentLike commentLike = getCommentLike(data);
-        commentLikeRepository.delete(commentLike);
+        commentLikeRepository.deleteByUserAndComment(commentLike.getUser(), commentLike.getComment());
     }
 
     private Comment getComment(Element data) {

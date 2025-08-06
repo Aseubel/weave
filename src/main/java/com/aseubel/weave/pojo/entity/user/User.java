@@ -5,8 +5,6 @@ import com.aseubel.weave.common.annotation.Desensitization;
 import com.aseubel.weave.common.desensitize.DesensitizationTypeEnum;
 import com.aseubel.weave.pojo.entity.BaseEntity;
 import com.aseubel.weave.pojo.entity.Image;
-import com.aseubel.weave.pojo.entity.competition.Participant;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;

@@ -8,6 +8,7 @@ import com.aseubel.weave.pojo.dto.competition.CompetitionRequest;
 import com.aseubel.weave.pojo.dto.competition.SubmissionRequest;
 import com.aseubel.weave.pojo.entity.competition.*;
 import com.aseubel.weave.pojo.entity.user.User;
+import com.aseubel.weave.redis.IRedisService;
 import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.repository.CompetitionRepository;
 import com.aseubel.weave.repository.ParticipantRepository;
@@ -18,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class CompetitionServiceImpl implements CompetitionService {
     private final CompetitionRepository competitionRepository;
     private final SubmissionRepository submissionRepository;
     private final ParticipantRepository participantRepository;
-    private final StringRedisTemplate redisTemplate;
+    private final IRedisService redisService;
     private final DisruptorProducer disruptorProducer;
 
     @Value("${app.competition-vote-limit:3}")
@@ -148,20 +148,20 @@ public class CompetitionServiceImpl implements CompetitionService {
                 });
 
         User currentUser = UserContext.getCurrentUser();
-        Long userId = currentUser.getId();
+        String userId = String.valueOf(currentUser.getId());
         // 记录被投票的作品
-        redisTemplate.opsForSet().add(KeyBuilder.submissionVoteRecentKey(), String.valueOf(userId));
+        redisService.addToSet(KeyBuilder.submissionVoteRecentKey(), String.valueOf(userId));
 
         // 添加投票数
-        redisTemplate.opsForHash().increment(KeyBuilder.competitionVoteStatusKey(competitionId), userId, 1L);
-        redisTemplate.opsForHash().increment(KeyBuilder.submissionVoteCountKey(), submissionId, 1);
+        redisService.incrMap(KeyBuilder.competitionVoteStatusKey(competitionId), userId, 1);
+        redisService.incrMap(KeyBuilder.submissionVoteCountKey(), String.valueOf(submissionId), 1);
 
         return submissionRepository.findById(submissionId).orElse(null);
     }
 
     private Long todayVoteCount(Long competitionId) {
         Long userId = UserContext.getCurrentUserId();
-        return (Long) redisTemplate.opsForHash().get(KeyBuilder.competitionVoteStatusKey(competitionId), String.valueOf(userId));
+        return redisService.getFromMap(KeyBuilder.competitionVoteStatusKey(competitionId), String.valueOf(userId));
     }
 
     @Override

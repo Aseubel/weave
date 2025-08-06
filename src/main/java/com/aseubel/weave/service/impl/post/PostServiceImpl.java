@@ -7,11 +7,13 @@ import com.aseubel.weave.context.UserContext;
 import com.aseubel.weave.pojo.dto.common.PageResponse;
 import com.aseubel.weave.pojo.dto.post.PostRequest;
 import com.aseubel.weave.pojo.dto.post.PostResponse;
-import com.aseubel.weave.pojo.entity.*;
+import com.aseubel.weave.pojo.entity.Follow;
+import com.aseubel.weave.pojo.entity.Image;
 import com.aseubel.weave.pojo.entity.post.Post;
 import com.aseubel.weave.pojo.entity.post.PostLike;
 import com.aseubel.weave.pojo.entity.user.InterestTag;
 import com.aseubel.weave.pojo.entity.user.User;
+import com.aseubel.weave.redis.IRedisService;
 import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.repository.*;
 import com.aseubel.weave.service.PostService;
@@ -21,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +47,7 @@ public class PostServiceImpl implements PostService {
     private final InterestTagRepository interestTagRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
-    private final StringRedisTemplate redisTemplate;
+    private final IRedisService redisService;
     private final DisruptorProducer disruptorProducer;
 
     @Override
@@ -184,19 +185,19 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public void toggleLike(Long postId) {
         User currentUser = UserContext.getCurrentUser();
-        Long userId = currentUser.getId();
+        String userId = String.valueOf(currentUser.getId());
         Boolean isLiked;
         Post post = getPostEntity(postId);
 
-        redisTemplate.opsForSet().add(KeyBuilder.postLikeRecentKey(), String.valueOf(userId));
+        redisService.addToSet(KeyBuilder.postLikeRecentKey(), userId);
         if ((isLiked = isLiked(postId, userId)) == null) {
             isLiked = postLikeRepository.findByUserAndPost(currentUser, post).isPresent();
-            redisTemplate.opsForHash().put(KeyBuilder.postLikeStatusKey(postId), userId, isLiked);
+            redisService.addToMap(KeyBuilder.postLikeStatusKey(postId), userId, isLiked);
         }
         if (isLiked) {
             // 取消点赞
-            redisTemplate.opsForHash().put(KeyBuilder.postLikeStatusKey(postId), userId, false);
-            redisTemplate.opsForHash().increment(KeyBuilder.postLikeCountKey(), postId, -1);
+            redisService.addToMap(KeyBuilder.postLikeStatusKey(postId), userId, false);
+            redisService.incrMap(KeyBuilder.postLikeCountKey(), String.valueOf(postId), -1);
 
             PostLike postLike = PostLike.builder()
                     .user(currentUser)
@@ -206,8 +207,8 @@ public class PostServiceImpl implements PostService {
             disruptorProducer.publish(postLike, EventType.POST_UNLIKE);
         } else {
             // 点赞
-            redisTemplate.opsForHash().put(KeyBuilder.postLikeStatusKey(postId), userId, true);
-            redisTemplate.opsForHash().increment(KeyBuilder.postLikeCountKey(), postId, 1);
+            redisService.addToMap(KeyBuilder.postLikeStatusKey(postId), userId, true);
+            redisService.incrMap(KeyBuilder.postLikeCountKey(), String.valueOf(postId), 1);
 
             PostLike postLike = PostLike.builder()
                     .user(currentUser)
@@ -261,8 +262,8 @@ public class PostServiceImpl implements PostService {
                 .build();
     }
 
-    private Boolean isLiked(Long postId, Long userId) {
-        return redisTemplate.opsForSet().isMember(KeyBuilder.postLikeStatusKey(postId), userId);
+    private Boolean isLiked(Long postId, String userId) {
+        return redisService.getFromMap(KeyBuilder.postLikeStatusKey(postId), userId);
     }
 
     private Post getPostEntity(Long postId) {

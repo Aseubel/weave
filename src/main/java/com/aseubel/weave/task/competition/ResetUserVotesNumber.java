@@ -1,9 +1,9 @@
 package com.aseubel.weave.task.competition;
 
+import com.aseubel.weave.redis.IRedisService;
 import com.aseubel.weave.redis.KeyBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class ResetUserVotesNumber {
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private IRedisService redisService;
 
     /**
      * 每天0点重置用户票数
@@ -25,6 +25,6 @@ public class ResetUserVotesNumber {
      */
     @Scheduled(cron = "0 0 0 * * ?")
     public void resetUserVotesNumber() {
-        redisTemplate.delete(KeyBuilder.competitionVoteStatusKey() + "*");
+        redisService.remove(KeyBuilder.competitionVoteStatusKey() + "*");
     }
 }

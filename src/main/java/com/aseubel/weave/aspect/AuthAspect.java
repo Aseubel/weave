@@ -3,12 +3,12 @@ package com.aseubel.weave.aspect;
 import com.aseubel.weave.common.annotation.constraint.RequireLogin;
 import com.aseubel.weave.common.annotation.constraint.RequirePermission;
 import com.aseubel.weave.common.exception.AuthenticationException;
-import com.aseubel.weave.common.exception.BusinessException;
-import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.common.util.JwtUtil;
 import com.aseubel.weave.context.UserContext;
 import com.aseubel.weave.pojo.entity.user.Role;
 import com.aseubel.weave.pojo.entity.user.User;
+import com.aseubel.weave.redis.IRedisService;
+import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -43,7 +42,7 @@ public class AuthAspect {
 
     private final JwtUtil jwtUtil;
     private final UserService userService;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final IRedisService redisService;
 
     /**
      * 登录校验切面
@@ -123,7 +122,7 @@ public class AuthAspect {
         // 检查token是否在Redis中（用于登出功能）
         Long userId = jwtUtil.getUserIdFromToken(token);
         String redisKey = KeyBuilder.userTokenKey(userId);
-        String storedToken = (String) redisTemplate.opsForValue().get(redisKey);
+        String storedToken = redisService.getValue(redisKey);
         if (!token.equals(storedToken)) {
             return null;
         }

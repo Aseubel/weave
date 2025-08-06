@@ -10,6 +10,7 @@ import com.aseubel.weave.pojo.entity.post.PostLike;
 import com.aseubel.weave.repository.PostLikeRepository;
 import com.aseubel.weave.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,13 +40,14 @@ public class PostProcessor implements Processor<Element> {
 
     private void handlePostLike(Element data) {
         PostLike postLike = getPostLike(data);
-        postLikeRepository.save(postLike);
-        postRepository.updateLikeCount(postLike.getPost().getId(), 1L);
+        if (postLikeRepository.findByUserAndPost(postLike.getUser(), postLike.getPost()).isEmpty()){
+            postLikeRepository.save(postLike);
+        }
     }
 
     private void handlePostUnlike(Element data) {
         PostLike postLike = getPostLike(data);
-        postLikeRepository.delete(postLike);
+        postLikeRepository.deleteByUserAndPost(postLike.getUser(), postLike.getPost());
     }
 
     private void handlePostComment(Element data) {

@@ -73,11 +73,6 @@
             <artifactId>hutool-all</artifactId>
             <version>5.8.25</version>
         </dependency>
-        <!-- Spring Data Redis -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
         <!-- Spring AOP -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -101,11 +96,6 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-        <!-- Spring Security -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
         <!-- HTTP Client for third-party login -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -126,6 +116,16 @@
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
             <version>3.17.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>3.26.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>2.0.56</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.alibaba.cola/cola-component-statemachine -->

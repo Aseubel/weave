@@ -15,6 +15,7 @@ import com.aseubel.weave.pojo.entity.user.CheckInStats;
 import com.aseubel.weave.pojo.entity.user.InterestTag;
 import com.aseubel.weave.pojo.entity.user.Role;
 import com.aseubel.weave.pojo.entity.user.User;
+import com.aseubel.weave.redis.IRedisService;
 import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.repository.CheckInRepository;
 import com.aseubel.weave.repository.CheckInStatsRepository;
@@ -28,19 +29,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.aseubel.weave.common.Constant.SMS_CODE_EXPIRE_MINUTES;
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     private final CheckInStatsRepository checkInStatsRepository;
     private final InterestTagRepository interestTagRepository;
     private final JwtUtil jwtUtil;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final IRedisService redisService;
     private final WebClient.Builder webClientBuilder;
     private final ThreadPoolTaskExecutor threadPoolExecutor;
 
@@ -242,7 +242,7 @@ public class UserServiceImpl implements UserService {
     public void logout(Long userId) {
         // 从Redis中删除token
         String redisKey = KeyBuilder.userTokenKey(userId);
-        redisTemplate.delete(redisKey);
+        redisService.remove(redisKey);
     }
 
     @Override
@@ -252,7 +252,7 @@ public class UserServiceImpl implements UserService {
 
         // 存储到Redis，5分钟过期
         String redisKey = KeyBuilder.smsCodeKey(mobile);
-        redisTemplate.opsForValue().set(redisKey, code, SMS_CODE_EXPIRE_MINUTES, TimeUnit.MINUTES);
+       redisService.setValue(redisKey, code, Duration.ofMinutes(SMS_CODE_EXPIRE_MINUTES).toMillis());
 
         // 这里应该调用短信服务发送验证码
         // 为了演示，我们只是记录日志
@@ -266,11 +266,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean verifySmsCode(String mobile, String code) {
         String redisKey = KeyBuilder.smsCodeKey(mobile);
-        String storedCode = (String) redisTemplate.opsForValue().get(redisKey);
+        String storedCode = redisService.getValue(redisKey);
 
         if (storedCode != null && storedCode.equals(code)) {
             // 验证成功后删除验证码
-            redisTemplate.delete(redisKey);
+            redisService.remove(redisKey);
             return true;
         }
         return false;
@@ -295,7 +295,7 @@ public class UserServiceImpl implements UserService {
 
         // 将访问令牌存储到Redis
         String redisKey = KeyBuilder.userTokenKey(user.getId());
-        redisTemplate.opsForValue().set(redisKey, accessToken, accessTokenExpiration, TimeUnit.MILLISECONDS);
+        redisService.setValue(redisKey, accessToken, accessTokenExpiration);
 
         return LoginResponse.fromUser(user, accessToken, refreshToken,
                 System.currentTimeMillis() + accessTokenExpiration,
@@ -527,7 +527,7 @@ public class UserServiceImpl implements UserService {
 
         // 清除用户的所有token，强制重新登录
         String tokenKey = KeyBuilder.userTokenKey(user.getId());
-        redisTemplate.delete(tokenKey);
+        redisService.remove(tokenKey);
 
         log.info("用户 {} 修改密码成功", user.getUsername());
     }
@@ -564,7 +564,7 @@ public class UserServiceImpl implements UserService {
         // 如果禁用用户，清除其token
         if (!user.getIsActive()) {
             String tokenKey = KeyBuilder.userTokenKey(userId);
-            redisTemplate.delete(tokenKey);
+            redisService.remove(tokenKey);
         }
 
         log.info("用户 {} 状态已更新为: {}", user.getUsername(), user.getIsActive() ? "启用" : "禁用");

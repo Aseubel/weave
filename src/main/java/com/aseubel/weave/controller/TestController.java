@@ -3,8 +3,8 @@ package com.aseubel.weave.controller;
 import com.aseubel.weave.common.annotation.constraint.RequireLogin;
 import com.aseubel.weave.common.annotation.constraint.RequirePermission;
 import com.aseubel.weave.context.UserContext;
+import com.aseubel.weave.redis.IRedisService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TestController {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final IRedisService redisService;
 
     /**
      * 公开接口，无需登录
@@ -104,13 +104,13 @@ public class TestController {
             // 测试Redis写入
             String testKey = "test:redis:" + System.currentTimeMillis();
             String testValue = "Hello Redis!";
-            redisTemplate.opsForValue().set(testKey, testValue);
+            redisService.setValue(testKey, testValue);
             
             // 测试Redis读取
-            String retrievedValue = (String) redisTemplate.opsForValue().get(testKey);
+            String retrievedValue = redisService.getValue(testKey);
             
             // 清理测试数据
-            redisTemplate.delete(testKey);
+            redisService.remove(testKey);
             
             Map<String, Object> result = new HashMap<>();
             result.put("message", "Redis连接测试成功");

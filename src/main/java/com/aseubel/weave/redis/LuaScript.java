@@ -11,13 +11,17 @@ import java.util.Set;
  */
 public class LuaScript {
 
-    public static final DefaultRedisScript<?> SET_GET_REMOVE_SCRIPT = new DefaultRedisScript<>("local key = KEYS[1] " +
-            "local members = redis.call('SMEMBERS', key) " +
-            "redis.call('DEL', key) " +
-            "return members", Set.class);
+    public static final String SET_GET_REMOVE_SCRIPT = """
+            local key = KEYS[1]
+            local members = redis.call('SMEMBERS', key)
+            redis.call('DEL', key)
+            return members
+            """;
 
-    public static final DefaultRedisScript<?> HASH_GET_REMOVE_SCRIPT = new DefaultRedisScript<>("local key = KEYS[1] " +
-            "local members = redis.call('HGETALL', key) " +
-            "redis.call('DEL', key) " +
-            "return members", Map.class);
+    public static final String HASH_GET_REMOVE_SCRIPT = """
+            local key = KEYS[1]
+            local members = redis.call('HGETALL', key)
+            redis.call('DEL', key)
+            return members
+            """;
 }

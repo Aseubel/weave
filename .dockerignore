@@ -1,0 +1,29 @@
+# .dockerignore
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Maven target directory
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE files
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Docs and other non-essential files
+README.md
+HELP.md
+docs/

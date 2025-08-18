@@ -1,5 +1,6 @@
 package com.aseubel.weave.service.impl.post;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import com.aseubel.weave.common.disruptor.DisruptorProducer;
 import com.aseubel.weave.common.disruptor.EventType;
@@ -273,11 +274,11 @@ public class PostServiceImpl implements PostService {
 
     private PostResponse convertToPostResponse(Post post, User currentUser) {
         // 检查当前用户是否点赞
-        boolean isLiked = postLikeRepository.existsByUserAndPost(currentUser, post);
+        boolean isLiked = ObjectUtil.isNotEmpty(currentUser) && postLikeRepository.existsByUserAndPost(currentUser, post);
 
         // 检查是否关注作者
         boolean isFollowingAuthor = false;
-        if (!post.getAuthor().getId().equals(currentUser.getId())) {
+        if (ObjectUtil.isNotEmpty(currentUser) && !post.getAuthor().getId().equals(currentUser.getId())) {
             isFollowingAuthor = followRepository.existsByFollowerAndFollowingAndStatus(
                     currentUser, post.getAuthor(), Follow.FollowStatus.ACTIVE);
         }

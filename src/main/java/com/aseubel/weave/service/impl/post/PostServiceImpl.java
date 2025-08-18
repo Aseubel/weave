@@ -1,5 +1,6 @@
 package com.aseubel.weave.service.impl.post;
 
+import cn.hutool.json.JSONUtil;
 import com.aseubel.weave.common.disruptor.DisruptorProducer;
 import com.aseubel.weave.common.disruptor.EventType;
 import com.aseubel.weave.common.exception.BusinessException;
@@ -17,7 +18,6 @@ import com.aseubel.weave.redis.IRedisService;
 import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.repository.*;
 import com.aseubel.weave.service.PostService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -352,8 +352,8 @@ public class PostServiceImpl implements PostService {
             return null;
         }
         try {
-            return objectMapper.writeValueAsString(list);
-        } catch (JsonProcessingException e) {
+            return JSONUtil.toJsonStr(list);
+        } catch (Exception e) {
             log.error("转换列表为JSON失败", e);
             return null;
         }
@@ -364,8 +364,8 @@ public class PostServiceImpl implements PostService {
             return new ArrayList<>();
         }
         try {
-            return objectMapper.readValue(json, List.class);
-        } catch (JsonProcessingException e) {
+            return JSONUtil.toList(json, String.class);
+        } catch (Exception e) {
             log.error("转换JSON为列表失败", e);
             return new ArrayList<>();
         }

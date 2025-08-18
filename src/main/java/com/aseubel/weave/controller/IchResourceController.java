@@ -1,6 +1,7 @@
 package com.aseubel.weave.controller;
 
 import com.aseubel.weave.common.ApiResponse;
+import com.aseubel.weave.common.annotation.constraint.RequirePermission;
 import com.aseubel.weave.context.UserContext;
 import com.aseubel.weave.pojo.dto.ich.IchResourceRequest;
 import com.aseubel.weave.pojo.dto.ich.IchResourceResponse;
@@ -33,6 +34,7 @@ public class IchResourceController {
      * 创建资源
      */
     @PostMapping
+    @RequirePermission
     public ApiResponse<IchResourceResponse> createResource(
             @Valid @RequestBody IchResourceRequest request) {
         Long userId = UserContext.getCurrentUserId();
@@ -44,6 +46,7 @@ public class IchResourceController {
      * 更新资源
      */
     @PutMapping("/{id}")
+    @RequirePermission
     public ApiResponse<IchResourceResponse> updateResource(
             @PathVariable Long id,
             @Valid @RequestBody IchResourceRequest request) {
@@ -56,6 +59,7 @@ public class IchResourceController {
      * 删除资源
      */
     @DeleteMapping("/{id}")
+    @RequirePermission
     public ApiResponse<Void> deleteResource(@PathVariable Long id) {
         Long userId = UserContext.getCurrentUserId();
         ichResourceService.deleteResource(id, userId);

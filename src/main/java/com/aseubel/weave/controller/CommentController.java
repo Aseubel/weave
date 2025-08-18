@@ -49,7 +49,6 @@ public class CommentController {
      * 获取帖子的评论列表
      */
     @GetMapping("/post/{postId}")
-    @RequireLogin
     public ApiResponse<PageResponse<CommentResponse>> getPostComments(
             @PathVariable Long postId,
             @RequestParam(defaultValue = "0") int page,
@@ -63,7 +62,6 @@ public class CommentController {
      * 获取资源的评论列表
      */
     @GetMapping("/resource/{resourceId}")
-    @RequireLogin
     public ApiResponse<PageResponse<CommentResponse>> getResourceComments(
             @PathVariable Long resourceId,
             @RequestParam(defaultValue = "0") int page,
@@ -77,7 +75,6 @@ public class CommentController {
      * 获取用户的评论列表
      */
     @GetMapping("/user/{userId}")
-    @RequireLogin
     public ApiResponse<PageResponse<CommentResponse>> getUserComments(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -91,7 +88,6 @@ public class CommentController {
      * 获取评论的回复列表
      */
     @GetMapping("/{commentId}/replies")
-    @RequireLogin
     public ApiResponse<PageResponse<CommentResponse>> getCommentReplies(
             @PathVariable Long commentId,
             @RequestParam(defaultValue = "0") int page,
@@ -115,7 +111,6 @@ public class CommentController {
      * 获取热门评论
      */
     @GetMapping("/hot")
-    @RequireLogin
     public ApiResponse<PageResponse<CommentResponse>> getHotComments(
             @RequestParam Long postId,
             @RequestParam(defaultValue = "0") int page,
@@ -129,7 +124,6 @@ public class CommentController {
      * 获取最新评论
      */
     @GetMapping("/latest")
-    @RequireLogin
     public ApiResponse<PageResponse<CommentResponse>> getLatestComments(
             @RequestParam Long postId,
             @RequestParam(defaultValue = "0") int page,

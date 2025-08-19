@@ -20,11 +20,11 @@ import lombok.*;
 public class Follow extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follower_id", nullable = false)
+    @JoinColumn(name = "follower_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User follower; // 关注者
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "following_id", nullable = false)
+    @JoinColumn(name = "following_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User following; // 被关注者
 
     @Enumerated(EnumType.STRING)

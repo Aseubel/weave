@@ -30,9 +30,9 @@ public class PostSyncLike {
     private final PostRepository postRepository;
     private final IRedisService redisService;
 
-    // 每分钟同步一次点赞数
+    // 每隔 1 秒同步一次点赞数
     @Transactional
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 1000)
     public void syncPostLike() {
         String key = KeyBuilder.postLikeCountKey();
         if (!redisService.isExists(key)) {

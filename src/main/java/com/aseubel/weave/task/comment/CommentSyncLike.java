@@ -1,9 +1,7 @@
 package com.aseubel.weave.task.comment;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.aseubel.weave.pojo.entity.comment.Comment;
-import com.aseubel.weave.pojo.entity.post.Post;
 import com.aseubel.weave.redis.IRedisService;
 import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.repository.CommentRepository;
@@ -31,9 +29,9 @@ public class CommentSyncLike {
     private final CommentRepository commentRepository;
     private final IRedisService redisService;
 
-    // 每分钟同步一次点赞数
+    // 每隔 1 秒同步一次点赞数
     @Transactional
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 1000)
     public void syncCommentLike() {
         String key = KeyBuilder.commentLikeCountKey();
         if (!redisService.isExists(key)) {

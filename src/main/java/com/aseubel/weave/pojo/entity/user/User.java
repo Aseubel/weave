@@ -40,7 +40,7 @@ public class User extends BaseEntity {
     private String nickname; // 昵称
 
     @OneToOne
-    @JoinColumn(name = "avatar_id")
+    @JoinColumn(name = "avatar_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Image avatar; // 头像链接
 
     @Column(unique = true, length = 20)

@@ -18,7 +18,7 @@ import lombok.*;
 public class UserPointRecord extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
     @Column(nullable = false)

@@ -42,7 +42,7 @@ public class Category extends BaseEntity {
     private Long parentId; // 父分类ID，null表示顶级分类
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+    @JoinColumn(name = "parent_id", insertable = false, updatable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Category parent; // 父分类
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

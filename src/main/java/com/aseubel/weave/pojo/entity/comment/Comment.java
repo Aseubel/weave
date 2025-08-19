@@ -24,17 +24,17 @@ import java.util.Set;
 public class Comment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user; // 评论者
 
     // 评论的帖子（可选）
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Post post;
 
     // 评论的资源（可选）
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resource_id")
+    @JoinColumn(name = "resource_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private IchResource resource;
 
     @Lob
@@ -47,7 +47,7 @@ public class Comment extends BaseEntity {
 
     // 自关联，用于实现回复功能
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Comment parent;
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

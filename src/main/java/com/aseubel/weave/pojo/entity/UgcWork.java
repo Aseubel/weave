@@ -18,7 +18,7 @@ import lombok.*;
 public class UgcWork extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User author;
 
     @Column(nullable = false, length = 200)

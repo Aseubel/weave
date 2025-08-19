@@ -21,7 +21,7 @@ import java.time.LocalDate;
 public class CheckInStats extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false, unique = true, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @ToString.Exclude
     private User user;
 

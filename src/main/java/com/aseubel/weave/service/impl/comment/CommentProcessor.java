@@ -11,6 +11,9 @@ import com.aseubel.weave.repository.CommentLikeRepository;
 import com.aseubel.weave.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Aseubel
@@ -23,6 +26,8 @@ public class CommentProcessor implements Processor<Element> {
     private CommentRepository commentRepository;
     @Autowired
     private CommentLikeRepository commentLikeRepository;
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     @Override
     public Result<Element> process(Element data, int index, ProcessorChain<Element> chain) {
@@ -36,15 +41,23 @@ public class CommentProcessor implements Processor<Element> {
     }
 
     private void handleCommentLike(Element data) {
-        CommentLike commentLike = getCommentLike(data);
-        if (commentLikeRepository.findByUserAndComment(commentLike.getUser(), commentLike.getComment()).isEmpty()){
-            commentLikeRepository.save(commentLike);
-        }
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(status -> {
+            CommentLike commentLike = getCommentLike(data);
+            if (commentLikeRepository.findByUserAndComment(commentLike.getUser(), commentLike.getComment()).isEmpty()){
+                commentLikeRepository.save(commentLike);
+            }
+            return null;
+        });
     }
 
     private void handleCommentUnlike(Element data) {
-        CommentLike commentLike = getCommentLike(data);
-        commentLikeRepository.deleteByUserAndComment(commentLike.getUser(), commentLike.getComment());
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(status -> {
+            CommentLike commentLike = getCommentLike(data);
+            commentLikeRepository.deleteByUserAndComment(commentLike.getUser(), commentLike.getComment());
+            return null;
+        });
     }
 
     private Comment getComment(Element data) {

@@ -3,6 +3,7 @@ package com.aseubel.weave.aspect;
 import com.aseubel.weave.common.annotation.constraint.RequireLogin;
 import com.aseubel.weave.common.annotation.constraint.RequirePermission;
 import com.aseubel.weave.common.exception.AuthenticationException;
+import com.aseubel.weave.common.exception.AuthorizationException;
 import com.aseubel.weave.common.util.JwtUtil;
 import com.aseubel.weave.context.UserContext;
 import com.aseubel.weave.pojo.entity.user.Role;
@@ -82,12 +83,12 @@ public class AuthAspect {
         if (requirePermission != null) {
             User currentUser = getCurrentUser();
             if (currentUser == null) {
-                throw new RuntimeException("用户未登录或登录已过期");
+                throw new AuthenticationException("用户未登录或登录已过期");
             }
 
             // 检查权限
             if (!hasPermission(currentUser, requirePermission)) {
-                throw new RuntimeException("权限不足，无法访问该资源");
+                throw new AuthorizationException("权限不足，无法访问该资源");
             }
 
             UserContext.setCurrentUser(currentUser);

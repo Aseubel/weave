@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class CheckIn extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @ToString.Exclude
     private User user;
 

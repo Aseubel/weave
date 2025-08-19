@@ -1,7 +1,6 @@
 package com.aseubel.weave.task.competition;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.aseubel.weave.redis.IRedisService;
 import com.aseubel.weave.redis.KeyBuilder;
 import com.aseubel.weave.repository.SubmissionRepository;
@@ -30,8 +29,8 @@ public class SubmissionSyncVote {
     private final SubmissionRepository repository;
     private final IRedisService redisService;
 
-    // 每分钟同步一次点赞数
-    @Scheduled(fixedRate = 60000)
+    // 每隔 1 秒同步一次投票数
+    @Scheduled(fixedRate = 1000)
     public void syncSubmissionVote() {
         String key = KeyBuilder.submissionVoteCountKey();
         if (!redisService.isExists(key)) {

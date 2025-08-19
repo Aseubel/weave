@@ -22,11 +22,11 @@ import lombok.*;
 public class CommentLike extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user; // 点赞用户
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id", nullable = false)
+    @JoinColumn(name = "comment_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Comment comment; // 被点赞的评论
 
     @Enumerated(EnumType.STRING)

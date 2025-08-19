@@ -36,10 +36,10 @@ public class IchResource extends BaseEntity {
     private String copyrightInfo; // 版权信息
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Category category; // 所属分类
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "uploader_id", nullable = false)
+    @JoinColumn(name = "uploader_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User uploader; // 上传者（管理员）
 }

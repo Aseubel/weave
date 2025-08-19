@@ -12,6 +12,9 @@ import com.aseubel.weave.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Aseubel
@@ -24,6 +27,9 @@ public class PostProcessor implements Processor<Element> {
     private PostRepository postRepository;
     @Autowired
     private PostLikeRepository postLikeRepository;
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
 
     @Override
     public Result<Element> process(Element data, int index, ProcessorChain<Element> chain) {
@@ -40,14 +46,22 @@ public class PostProcessor implements Processor<Element> {
 
     private void handlePostLike(Element data) {
         PostLike postLike = getPostLike(data);
-        if (postLikeRepository.findByUserAndPost(postLike.getUser(), postLike.getPost()).isEmpty()){
-            postLikeRepository.save(postLike);
-        }
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(status -> {
+            if (!postLikeRepository.existsByUserAndPostAndType(postLike.getUser(), postLike.getPost(), postLike.getType())) {
+                postLikeRepository.save(postLike);
+            }
+            return null;
+        });
     }
 
     private void handlePostUnlike(Element data) {
-        PostLike postLike = getPostLike(data);
-        postLikeRepository.deleteByUserAndPost(postLike.getUser(), postLike.getPost());
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(status -> {
+            PostLike postLike = getPostLike(data);
+            postLikeRepository.deleteByUserAndPost(postLike.getUser(), postLike.getPost());
+            return null;
+        });
     }
 
     private void handlePostComment(Element data) {

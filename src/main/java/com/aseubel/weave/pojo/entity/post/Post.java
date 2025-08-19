@@ -23,7 +23,7 @@ import java.util.Set;
 public class Post extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User author; // 作者
 
     @Column(nullable = false, length = 200)

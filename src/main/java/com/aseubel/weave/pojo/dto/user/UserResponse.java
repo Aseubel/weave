@@ -31,7 +31,7 @@ public class UserResponse {
     /**
      * 用户ID
      */
-    private Long id;
+    private String id;
 
     /**
      * 用户名

@@ -24,7 +24,7 @@ public class LoginResponse {
     /**
      * 用户ID
      */
-    private Long userId;
+    private String userId;
 
     /**
      * 用户名
@@ -54,20 +54,20 @@ public class LoginResponse {
     /**
      * 访问令牌过期时间（毫秒）
      */
-    private Long accessTokenExpiration;
+    private String accessTokenExpiration;
 
     /**
      * 刷新令牌过期时间（毫秒）
      */
-    private Long refreshTokenExpiration;
+    private String refreshTokenExpiration;
 
     /**
      * 从用户实体创建登录响应
      */
     public static LoginResponse fromUser(User user, String accessToken, String refreshToken,
-            Long accessTokenExpiration, Long refreshTokenExpiration) {
+            String accessTokenExpiration, String refreshTokenExpiration) {
         return LoginResponse.builder()
-                .userId(user.getId())
+                .userId(String.valueOf(user.getId()))
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .avatarUrl(Optional.ofNullable(user.getAvatar()).map(Image::getImageUrl).orElse(null))

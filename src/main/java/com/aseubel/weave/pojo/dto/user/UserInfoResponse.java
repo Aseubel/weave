@@ -19,7 +19,7 @@ import java.util.Set;
 @Builder
 public class UserInfoResponse {
 
-    private Long id; // 用户ID
+    private String id; // 用户ID
     private String username; // 用户名
     private String nickname; // 昵称
     private String bio; // 个人简介
@@ -46,7 +46,7 @@ public class UserInfoResponse {
     @Data
     @Builder
     public static class InterestTagInfo {
-        private Long id;
+        private String id;
         private String name;
         private String color;
     }

@@ -298,8 +298,8 @@ public class UserServiceImpl implements UserService {
         redisService.setValue(redisKey, accessToken, accessTokenExpiration);
 
         return LoginResponse.fromUser(user, accessToken, refreshToken,
-                System.currentTimeMillis() + accessTokenExpiration,
-                System.currentTimeMillis() + refreshTokenExpiration);
+                String.valueOf(System.currentTimeMillis() + accessTokenExpiration),
+                String.valueOf(System.currentTimeMillis() + refreshTokenExpiration));
     }
 
     /**
@@ -428,14 +428,14 @@ public class UserServiceImpl implements UserService {
         // 构建兴趣标签信息
         Set<UserInfoResponse.InterestTagInfo> interestTagInfos = user.getInterestTags().stream()
                 .map(tag -> UserInfoResponse.InterestTagInfo.builder()
-                        .id(tag.getId())
+                        .id(String.valueOf(tag.getId()))
                         .name(tag.getName())
                         .color(tag.getColor())
                         .build())
                 .collect(Collectors.toSet());
 
         return UserInfoResponse.builder()
-                .id(user.getId())
+                .id(String.valueOf(user.getId()))
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .bio(user.getBio())

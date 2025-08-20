@@ -298,7 +298,7 @@ public class FollowServiceImpl implements FollowService {
                                 user, currentUser, Follow.FollowStatus.ACTIVE);
 
                 return UserResponse.builder()
-                                .id(user.getId())
+                                .id(String.valueOf(user.getId()))
                                 .username(user.getUsername())
                                 .nickname(user.getNickname())
                                 .avatar(Optional.ofNullable(user.getAvatar()).map(Image::getImageUrl).orElse(null))

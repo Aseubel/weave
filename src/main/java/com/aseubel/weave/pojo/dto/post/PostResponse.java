@@ -23,7 +23,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class PostResponse {
 
-    private Long id;
+    private String id;
     private String title;
     private String content;
     private Post.PostType type;
@@ -59,7 +59,7 @@ public class PostResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AuthorInfo {
-        private Long id;
+        private String id;
         private String username;
         private String nickname;
         private String avatar;
@@ -75,7 +75,7 @@ public class PostResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class InterestTagInfo {
-        private Long id;
+        private String id;
         private String name;
         private String color;
     }

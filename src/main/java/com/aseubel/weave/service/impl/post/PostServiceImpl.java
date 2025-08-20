@@ -284,7 +284,7 @@ public class PostServiceImpl implements PostService {
         }
 
         return PostResponse.builder()
-                .id(post.getId())
+                .id(String.valueOf(post.getId()))
                 .title(post.getTitle())
                 .content(post.getContent())
                 .type(post.getType())
@@ -308,7 +308,7 @@ public class PostServiceImpl implements PostService {
 
     private PostResponse.AuthorInfo convertToAuthorInfo(User user) {
         return PostResponse.AuthorInfo.builder()
-                .id(user.getId())
+                .id(String.valueOf(user.getId()))
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .avatar(Optional.ofNullable(user.getAvatar()).map(Image::getImageUrl).orElse(null))
@@ -323,7 +323,7 @@ public class PostServiceImpl implements PostService {
         }
         return interestTags.stream()
                 .map(tag -> PostResponse.InterestTagInfo.builder()
-                        .id(tag.getId())
+                        .id(String.valueOf(tag.getId()))
                         .name(tag.getName())
                         .color(tag.getColor())
                         .build())

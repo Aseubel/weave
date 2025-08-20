@@ -29,7 +29,7 @@ public class DesensitizationSerializer extends JsonSerializer<String> implements
     @Override
     public void serialize(String s, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeString(type.desensitize(s, startInclude, endExclude));
-        System.out.println("序列化器被调用 " + s);
+//        System.out.println("序列化器被调用 " + s);
     }
 
     @Override

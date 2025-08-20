@@ -39,8 +39,13 @@ public enum DesensitizationTypeEnum {
     // 邮箱
     EMAIL {
         @Override
-        public String desensitize(String str, Integer startInclude, Integer endExclude) {
-            return DesensitizedUtil.email(str);
+        public String desensitize(String email, Integer startInclude, Integer endExclude) {
+            if (StrUtil.isBlank(email)) {
+                return "";
+            } else {
+                int index = StrUtil.indexOf(email, '@');
+                return index <= 1 ? email : StrUtil.hide(email, 3, index);
+            }
         }
     },
     // 地址

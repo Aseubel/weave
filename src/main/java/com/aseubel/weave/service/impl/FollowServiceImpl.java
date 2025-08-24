@@ -6,8 +6,10 @@ import com.aseubel.weave.pojo.dto.common.PageResponse;
 import com.aseubel.weave.pojo.dto.user.UserResponse;
 import com.aseubel.weave.pojo.entity.Follow;
 import com.aseubel.weave.pojo.entity.Image;
+import com.aseubel.weave.pojo.entity.post.Post;
 import com.aseubel.weave.pojo.entity.user.User;
 import com.aseubel.weave.repository.FollowRepository;
+import com.aseubel.weave.repository.PostRepository;
 import com.aseubel.weave.repository.UserRepository;
 import com.aseubel.weave.service.FollowService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class FollowServiceImpl implements FollowService {
 
         private final FollowRepository followRepository;
         private final UserRepository userRepository;
+        private final PostRepository postRepository;
 
         @Override
         @Transactional
@@ -313,7 +316,7 @@ public class FollowServiceImpl implements FollowService {
                                                 Follow.FollowStatus.ACTIVE))
                                 .followersCount(followRepository.countByFollowingAndStatus(user,
                                                 Follow.FollowStatus.ACTIVE))
-                                .postsCount(0L) // 需要从PostRepository获取
+                                .postsCount(postRepository.countByAuthorAndStatus(user, Post.PostStatus.PUBLISHED))
                                 .isFollowing(isFollowing)
                                 .isFollowedBy(isFollowedBy)
                                 .isMutualFollow(isFollowing && isFollowedBy)

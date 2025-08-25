@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 /**
  * 评论服务实现类
+ *
  * @author Aseubel
  * @date 2025/6/29
  */
@@ -50,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public CommentResponse createComment(CommentRequest request) {
         User currentUser = UserContext.getCurrentUser();
-        
+
         Comment.CommentBuilder commentBuilder = Comment.builder()
                 .user(currentUser)
                 .content(request.getContent());
@@ -60,7 +61,7 @@ public class CommentServiceImpl implements CommentService {
             Post post = postRepository.findById(request.getPostId())
                     .orElseThrow(() -> new BusinessException("帖子不存在"));
             commentBuilder.post(post);
-            
+
             // 增加帖子评论数
             postRepository.updateCommentCount(request.getPostId(), 1L);
         }
@@ -82,7 +83,7 @@ public class CommentServiceImpl implements CommentService {
         User currentUser = UserContext.getCurrentUser();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BusinessException("评论不存在"));
-        
+
         // 检查权限
         if (!comment.getUser().getId().equals(currentUser.getId())) {
             throw new BusinessException("无权限删除此评论");
@@ -90,7 +91,7 @@ public class CommentServiceImpl implements CommentService {
 
         comment.setStatus(Comment.CommentStatus.DELETED);
         commentRepository.save(comment);
-        
+
         // 减少帖子评论数
         if (comment.getPost() != null) {
             postRepository.updateCommentCount(comment.getPost().getId(), -1L);
@@ -102,10 +103,10 @@ public class CommentServiceImpl implements CommentService {
         User currentUser = UserContext.getCurrentUser();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException("帖子不存在"));
-        
+
         Page<Comment> comments = commentRepository.findByPostAndParentIsNullAndStatusOrderByCreatedAtDesc(
                 post, Comment.CommentStatus.PUBLISHED, pageable);
-        
+
         return convertToPageResponse(comments, currentUser);
     }
 
@@ -126,14 +127,14 @@ public class CommentServiceImpl implements CommentService {
         User currentUser = UserContext.getCurrentUser();
         Comment parent = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BusinessException("评论不存在"));
-        
+
         List<Comment> replies = commentRepository.findByParentAndStatusOrderByCreatedAtAsc(
                 parent, Comment.CommentStatus.PUBLISHED);
-        
+
         List<CommentResponse> responses = replies.stream()
                 .map(reply -> convertToCommentResponse(reply, currentUser))
                 .collect(Collectors.toList());
-        
+
         return PageResponse.<CommentResponse>builder()
                 .content(responses)
                 .total((long) responses.size())
@@ -152,10 +153,10 @@ public class CommentServiceImpl implements CommentService {
         User currentUser = UserContext.getCurrentUser();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException("用户不存在"));
-        
+
         Page<Comment> comments = commentRepository.findByUserAndStatusOrderByCreatedAtDesc(
                 user, Comment.CommentStatus.PUBLISHED, pageable);
-        
+
         return convertToPageResponse(comments, currentUser);
     }
 
@@ -203,10 +204,10 @@ public class CommentServiceImpl implements CommentService {
         User currentUser = UserContext.getCurrentUser();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException("帖子不存在"));
-        
+
         Page<Comment> comments = commentRepository.findHotCommentsByPost(
                 post, Comment.CommentStatus.PUBLISHED, pageable);
-        
+
         return convertToPageResponse(comments, currentUser);
     }
 
@@ -215,10 +216,10 @@ public class CommentServiceImpl implements CommentService {
         User currentUser = UserContext.getCurrentUser();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException("帖子不存在"));
-        
+
         Page<Comment> comments = commentRepository.findLatestCommentsByPost(
                 post, Comment.CommentStatus.PUBLISHED, pageable);
-        
+
         return convertToPageResponse(comments, currentUser);
     }
 
@@ -228,17 +229,24 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private Boolean isLiked(Long commentId, String userId) {
-        return redisService.getFromMap(KeyBuilder.commentLikeStatusKey(commentId), userId);
+        Boolean isLiked = redisService.getFromMap(KeyBuilder.commentLikeStatusKey(commentId), userId);
+        if (isLiked == null) {
+            isLiked = commentLikeRepository.existsByUserAndComment(
+                    User.builder().id(Long.parseLong(userId)).build(),
+                    Comment.builder().id(commentId).build());
+        }
+        return isLiked;
     }
 
     private CommentResponse convertToCommentResponse(Comment comment, User currentUser) {
         // 当前用户是否点赞
         Boolean isLiked = ObjectUtil.isNotEmpty(currentUser) && isLiked(comment.getId(), currentUser.getId().toString());
+        isLiked(comment.getId(), currentUser.getId().toString());
 
         // 获取回复列表
         List<Comment> replies = commentRepository.findByParentAndStatusOrderByCreatedAtAsc(
                 comment, Comment.CommentStatus.PUBLISHED);
-        
+
         List<CommentResponse> replyResponses = replies.stream()
                 .map(reply -> convertToCommentResponse(reply, currentUser))
                 .collect(Collectors.toList());

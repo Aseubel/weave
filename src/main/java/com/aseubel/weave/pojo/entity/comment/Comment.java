@@ -6,6 +6,7 @@ import com.aseubel.weave.pojo.entity.post.Post;
 import com.aseubel.weave.pojo.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 
@@ -16,7 +17,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@Builder
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

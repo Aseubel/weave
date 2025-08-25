@@ -7,6 +7,7 @@ import com.aseubel.weave.pojo.entity.BaseEntity;
 import com.aseubel.weave.pojo.entity.Image;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -20,7 +21,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@Builder
+@SuperBuilder(toBuilder = true)
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor

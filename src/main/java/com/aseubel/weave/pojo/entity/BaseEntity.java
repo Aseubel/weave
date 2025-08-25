@@ -3,8 +3,11 @@ package com.aseubel.weave.pojo.entity;
 
 import com.aseubel.weave.common.annotation.SnowflakeId;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -19,6 +22,9 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
+@SuperBuilder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
 @MappedSuperclass // 表示这是一个基类，其属性会映射到子类的表中
 @EntityListeners(AuditingEntityListener.class) // 启用JPA审计功能（自动填充创建/更新时间）
 public abstract class BaseEntity implements Serializable {

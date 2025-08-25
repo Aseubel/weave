@@ -29,6 +29,7 @@ public class PostProcessor implements Processor<Element> {
     private PostLikeRepository postLikeRepository;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result<Element> process(Element data, int index, ProcessorChain<Element> chain) {
         EventType eventType = data.getEventType();
         switch (eventType) {

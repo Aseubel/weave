@@ -28,6 +28,7 @@ public class CommentProcessor implements Processor<Element> {
     private CommentLikeRepository commentLikeRepository;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result<Element> process(Element data, int index, ProcessorChain<Element> chain) {
         EventType eventType = data.getEventType();
         switch (eventType) {

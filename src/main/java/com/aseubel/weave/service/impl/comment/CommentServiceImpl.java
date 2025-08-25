@@ -241,7 +241,6 @@ public class CommentServiceImpl implements CommentService {
     private CommentResponse convertToCommentResponse(Comment comment, User currentUser) {
         // 当前用户是否点赞
         Boolean isLiked = ObjectUtil.isNotEmpty(currentUser) && isLiked(comment.getId(), currentUser.getId().toString());
-        isLiked(comment.getId(), currentUser.getId().toString());
 
         // 获取回复列表
         List<Comment> replies = commentRepository.findByParentAndStatusOrderByCreatedAtAsc(

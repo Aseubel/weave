@@ -38,7 +38,7 @@ public class CommentSyncLike {
             return;
         }
         List<Object> commentList = redisService.execute(
-                HASH_GET_REMOVE_SCRIPT, RScript.ReturnType.MAPVALUE, Collections.singletonList(key), 0);
+                HASH_GET_REMOVE_SCRIPT, RScript.ReturnType.MULTI, Collections.singletonList(key), 0);
         if (CollectionUtil.isNotEmpty(commentList)) {
             // 从 List 手动构建 Map
             Map<String, String> commentMap = new HashMap<>();

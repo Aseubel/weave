@@ -28,12 +28,12 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user; // 评论者
 
-    // 评论的帖子（可选）
+    // 评论的帖子
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Post post;
 
-    // 评论的资源（可选）
+    // 评论的资源
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private IchResource resource;

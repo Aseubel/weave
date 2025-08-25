@@ -61,6 +61,7 @@ public class PostController {
      * 获取帖子详情
      */
     @GetMapping("/{postId}")
+    @RequireLogin(false)
     public ApiResponse<PostResponse> getPost(@PathVariable Long postId) {
         PostResponse response = postService.getPostById(postId);
         return ApiResponse.success(response);
@@ -70,6 +71,7 @@ public class PostController {
      * 分页查询帖子列表
      */
     @GetMapping
+    @RequireLogin(false)
     public ApiResponse<PageResponse<PostResponse>> getPosts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -82,6 +84,7 @@ public class PostController {
      * 根据类型查询帖子
      */
     @GetMapping("/type/{type}")
+    @RequireLogin(false)
     public ApiResponse<PageResponse<PostResponse>> getPostsByType(
             @PathVariable Post.PostType type,
             @RequestParam(defaultValue = "0") int page,
@@ -95,6 +98,7 @@ public class PostController {
      * 查询用户的帖子
      */
     @GetMapping("/user/{userId}")
+    @RequireLogin(false)
     public ApiResponse<PageResponse<PostResponse>> getUserPosts(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -121,6 +125,7 @@ public class PostController {
      * 查询热门帖子
      */
     @GetMapping("/hot")
+    @RequireLogin(false)
     public ApiResponse<PageResponse<PostResponse>> getHotPosts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -133,6 +138,7 @@ public class PostController {
      * 搜索帖子
      */
     @GetMapping("/search")
+    @RequireLogin(false)
     public ApiResponse<PageResponse<PostResponse>> searchPosts(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
@@ -156,6 +162,7 @@ public class PostController {
      * 获取置顶帖子列表
      */
     @GetMapping("/top")
+    @RequireLogin(false)
     public ApiResponse<PageResponse<PostResponse>> getTopPosts() {
         PageResponse<PostResponse> response = postService.getTopPosts();
         return ApiResponse.success(response);

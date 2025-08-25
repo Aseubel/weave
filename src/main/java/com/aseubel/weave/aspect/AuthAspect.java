@@ -1,5 +1,6 @@
 package com.aseubel.weave.aspect;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.aseubel.weave.common.annotation.constraint.RequireLogin;
 import com.aseubel.weave.common.annotation.constraint.RequirePermission;
 import com.aseubel.weave.common.exception.AuthenticationException;
@@ -17,11 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -50,18 +53,18 @@ public class AuthAspect {
      */
     @Around("@annotation(requireLogin) || @within(requireLogin)")
     public Object checkLogin(ProceedingJoinPoint joinPoint, RequireLogin requireLogin) throws Throwable {
-//        if (requireLogin == null) {
-//            requireLogin = joinPoint.getTarget().getClass().getAnnotation(RequireLogin.class);
-//        }
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
+        if (ObjectUtil.isEmpty(requireLogin)) {
+            requireLogin = method.getAnnotation(RequireLogin.class);
+        }
 
-//        if (requireLogin != null && requireLogin.value()) {
-            User currentUser = getCurrentUser();
-            if (currentUser == null) {
-                throw new AuthenticationException("用户未登录或登录已过期");
-            }
-            // 将当前用户信息存储到ThreadLocal中，供后续使用
-            UserContext.setCurrentUser(currentUser);
-//        }
+        User currentUser = getCurrentUser();
+        if (ObjectUtil.isEmpty(currentUser) && requireLogin.value()) {
+            throw new AuthenticationException("用户未登录或登录已过期");
+        }
+        // 将当前用户信息存储到ThreadLocal中，供后续使用
+        UserContext.setCurrentUser(currentUser);
 
         try {
             return joinPoint.proceed();

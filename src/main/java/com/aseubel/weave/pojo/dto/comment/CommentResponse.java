@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CommentResponse {
 
-    private Long id;
+    private String id;
     private String content;
     private Integer likeCount;
     private Comment.CommentStatus status;
@@ -52,7 +52,7 @@ public class CommentResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserInfo {
-        private Long id;
+        private String id;
         private String username;
         private String nickname;
         private Image avatar;
@@ -67,7 +67,7 @@ public class CommentResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ParentCommentInfo {
-        private Long id;
+        private String id;
         private String content;
         private UserInfo user;
     }

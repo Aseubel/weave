@@ -251,7 +251,7 @@ public class CommentServiceImpl implements CommentService {
                 .collect(Collectors.toList());
 
         return CommentResponse.builder()
-                .id(comment.getId())
+                .id(comment.getId().toString())
                 .content(comment.getContent())
                 .likeCount(comment.getLikeCount())
                 .status(comment.getStatus())
@@ -267,7 +267,7 @@ public class CommentServiceImpl implements CommentService {
 
     private CommentResponse.UserInfo convertToUserInfo(User user) {
         return CommentResponse.UserInfo.builder()
-                .id(user.getId())
+                .id(user.getId().toString())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .avatar(user.getAvatar())
@@ -277,7 +277,7 @@ public class CommentServiceImpl implements CommentService {
 
     private CommentResponse.ParentCommentInfo convertToParentCommentInfo(Comment parent) {
         return CommentResponse.ParentCommentInfo.builder()
-                .id(parent.getId())
+                .id(parent.getId().toString())
                 .content(parent.getContent())
                 .user(convertToUserInfo(parent.getUser()))
                 .build();

@@ -1,6 +1,7 @@
 package com.aseubel.weave.service.impl.comment;
 
 import cn.hutool.core.util.BooleanUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.aseubel.weave.common.disruptor.DisruptorProducer;
 import com.aseubel.weave.common.disruptor.EventType;
 import com.aseubel.weave.common.exception.BusinessException;
@@ -232,7 +233,7 @@ public class CommentServiceImpl implements CommentService {
 
     private CommentResponse convertToCommentResponse(Comment comment, User currentUser) {
         // 当前用户是否点赞
-        Boolean isLiked = isLiked(comment.getId(), currentUser.getId().toString());
+        Boolean isLiked = ObjectUtil.isNotEmpty(currentUser) && isLiked(comment.getId(), currentUser.getId().toString());
 
         // 获取回复列表
         List<Comment> replies = commentRepository.findByParentAndStatusOrderByCreatedAtAsc(

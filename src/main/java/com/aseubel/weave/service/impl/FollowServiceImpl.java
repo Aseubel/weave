@@ -1,5 +1,6 @@
 package com.aseubel.weave.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.aseubel.weave.common.exception.BusinessException;
 import com.aseubel.weave.context.UserContext;
 import com.aseubel.weave.pojo.dto.common.PageResponse;
@@ -295,9 +296,9 @@ public class FollowServiceImpl implements FollowService {
                 User currentUser = UserContext.getCurrentUser();
 
                 // 检查关注状态
-                boolean isFollowing = followRepository.existsByFollowerAndFollowingAndStatus(
+                boolean isFollowing = ObjectUtil.isNotEmpty(currentUser) && followRepository.existsByFollowerAndFollowingAndStatus(
                                 currentUser, user, Follow.FollowStatus.ACTIVE);
-                boolean isFollowedBy = followRepository.existsByFollowerAndFollowingAndStatus(
+                boolean isFollowedBy = ObjectUtil.isNotEmpty(currentUser) && followRepository.existsByFollowerAndFollowingAndStatus(
                                 user, currentUser, Follow.FollowStatus.ACTIVE);
 
                 return UserResponse.builder()
@@ -312,11 +313,12 @@ public class FollowServiceImpl implements FollowService {
                                 .birthday(user.getBirthday())
                                 .createdAt(user.getCreatedAt())
                                 .updatedAt(user.getUpdatedAt())
-                                .followingCount(followRepository.countByFollowerAndStatus(user,
-                                                Follow.FollowStatus.ACTIVE))
-                                .followersCount(followRepository.countByFollowingAndStatus(user,
-                                                Follow.FollowStatus.ACTIVE))
-                                .postsCount(postRepository.countByAuthorAndStatus(user, Post.PostStatus.PUBLISHED))
+                                .followingCount(ObjectUtil.isNotEmpty(currentUser) ? followRepository.countByFollowerAndStatus(user,
+                                                Follow.FollowStatus.ACTIVE) : 0)
+                                .followersCount(ObjectUtil.isNotEmpty(currentUser) ? followRepository.countByFollowingAndStatus(user,
+                                                Follow.FollowStatus.ACTIVE) : 0)
+                                .postsCount(ObjectUtil.isNotEmpty(currentUser) ? postRepository.countByAuthorAndStatus(
+                                        user, Post.PostStatus.PUBLISHED) : 0)
                                 .isFollowing(isFollowing)
                                 .isFollowedBy(isFollowedBy)
                                 .isMutualFollow(isFollowing && isFollowedBy)

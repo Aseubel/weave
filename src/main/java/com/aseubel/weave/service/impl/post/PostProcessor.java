@@ -27,9 +27,6 @@ public class PostProcessor implements Processor<Element> {
     private PostRepository postRepository;
     @Autowired
     private PostLikeRepository postLikeRepository;
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-
 
     @Override
     public Result<Element> process(Element data, int index, ProcessorChain<Element> chain) {
@@ -46,22 +43,14 @@ public class PostProcessor implements Processor<Element> {
 
     private void handlePostLike(Element data) {
         PostLike postLike = getPostLike(data);
-        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.execute(status -> {
-            if (!postLikeRepository.existsByUserAndPostAndType(postLike.getUser(), postLike.getPost(), postLike.getType())) {
-                postLikeRepository.save(postLike);
-            }
-            return null;
-        });
+        if (!postLikeRepository.existsByUserAndPostAndType(postLike.getUser(), postLike.getPost(), postLike.getType())) {
+            postLikeRepository.save(postLike);
+        }
     }
 
     private void handlePostUnlike(Element data) {
-        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.execute(status -> {
-            PostLike postLike = getPostLike(data);
-            postLikeRepository.deleteByUserAndPost(postLike.getUser(), postLike.getPost());
-            return null;
-        });
+        PostLike postLike = getPostLike(data);
+        postLikeRepository.deleteByUserAndPost(postLike.getUser(), postLike.getPost());
     }
 
     private void handlePostComment(Element data) {

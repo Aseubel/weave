@@ -37,7 +37,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
      * 查询评论的回复
      */
     List<Comment> findByParentAndStatusOrderByCreatedAtAsc(
-            Comment parent, Comment.CommentStatus status);
+            Comment parent, Comment.CommentStatus status, Pageable pageable);
 
     /**
      * 查询用户的评论
@@ -48,22 +48,22 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     /**
      * 统计帖子的评论数
      */
-    long countByPostAndStatus(Post post, Comment.CommentStatus status);
+    int countByPostAndStatus(Post post, Comment.CommentStatus status);
 
     /**
      * 统计资源的评论数
      */
-    long countByResourceAndStatus(IchResource resource, Comment.CommentStatus status);
+    int countByResourceAndStatus(IchResource resource, Comment.CommentStatus status);
 
     /**
      * 统计评论的回复数
      */
-    long countByParentAndStatus(Comment parent, Comment.CommentStatus status);
+    int countByParentAndStatus(Comment parent, Comment.CommentStatus status);
 
     /**
      * 统计用户的评论数
      */
-    long countByUserAndStatus(User user, Comment.CommentStatus status);
+    int countByUserAndStatus(User user, Comment.CommentStatus status);
 
     /**
      * 增加评论点赞数

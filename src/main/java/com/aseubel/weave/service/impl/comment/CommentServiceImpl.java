@@ -129,18 +129,23 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new BusinessException("评论不存在"));
 
         List<Comment> replies = commentRepository.findByParentAndStatusOrderByCreatedAtAsc(
-                parent, Comment.CommentStatus.PUBLISHED);
+                parent, Comment.CommentStatus.PUBLISHED, pageable);
 
         List<CommentResponse> responses = replies.stream()
                 .map(reply -> convertToCommentResponse(reply, currentUser))
                 .collect(Collectors.toList());
 
+        int totalElements = commentRepository.countByParentAndStatus(parent, Comment.CommentStatus.PUBLISHED);
+        int totalPages = totalElements % pageable.getPageSize() == 0
+                ? totalElements / pageable.getPageSize()
+                : totalElements / pageable.getPageSize() + 1;
+
         return PageResponse.<CommentResponse>builder()
                 .content(responses)
-                .total((long) responses.size())
-                .totalPages(1)
+                .total((long) totalElements)
+                .totalPages(totalPages)
                 .size(responses.size())
-                .page(1)
+                .page(pageable.getPageNumber() + 1)
                 .isFirst(true)
                 .isLast(true)
                 .hasNext(false)
@@ -243,12 +248,8 @@ public class CommentServiceImpl implements CommentService {
         Boolean isLiked = ObjectUtil.isNotEmpty(currentUser) && isLiked(comment.getId(), currentUser.getId().toString());
 
         // 获取回复列表
-        List<Comment> replies = commentRepository.findByParentAndStatusOrderByCreatedAtAsc(
+        int replyCount = commentRepository.countByParentAndStatus(
                 comment, Comment.CommentStatus.PUBLISHED);
-
-        List<CommentResponse> replyResponses = replies.stream()
-                .map(reply -> convertToCommentResponse(reply, currentUser))
-                .collect(Collectors.toList());
 
         return CommentResponse.builder()
                 .id(comment.getId().toString())
@@ -259,8 +260,7 @@ public class CommentServiceImpl implements CommentService {
                 .updatedAt(comment.getUpdatedAt())
                 .user(convertToUserInfo(comment.getUser()))
                 .parent(comment.getParent() != null ? convertToParentCommentInfo(comment.getParent()) : null)
-                .replies(replyResponses)
-                .replyCount(replies.size())
+                .replyCount(replyCount)
                 .isLiked(BooleanUtil.isTrue(isLiked))
                 .build();
     }

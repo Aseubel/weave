@@ -3,7 +3,7 @@
 # 使用说明，用来提示输入参数
 usage(){
   echo "-----------------------------------"
-  echo "Usage: sh running.sh [base|services|stop|rm|rmi]"
+  echo "Usage: sh running.sh [base|services|stop|rm|rmi|new]"
   exit 1
 }
 
@@ -31,6 +31,13 @@ else
         exit 1
     fi
 fi
+
+new(){
+  docker stop weave
+  docker rm weave
+  docker rmi crpi-5tzwiznwaw34lfca.cn-guangzhou.personal.cr.aliyuncs.com/aseubel/weave:latest
+  $COMPOSE_COMMAND -f docker-compose-app.yml up
+}
 
 # 启动基础环境（必须）
 base(){
@@ -61,6 +68,9 @@ rmi(){
 
 # 根据输入参数，选择执行对应方法，不输入则执行使用说明
 case "$1" in
+"new")
+  new
+;;
 "base")
   base
 ;;

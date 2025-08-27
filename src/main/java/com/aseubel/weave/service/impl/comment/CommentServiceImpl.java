@@ -248,8 +248,12 @@ public class CommentServiceImpl implements CommentService {
         Boolean isLiked = ObjectUtil.isNotEmpty(currentUser) && isLiked(comment.getId(), currentUser.getId().toString());
 
         // 获取回复列表
-        int replyCount = commentRepository.countByParentAndStatus(
-                comment, Comment.CommentStatus.PUBLISHED);
+        List<Comment> replies = commentRepository.findByParentAndStatusOrderByCreatedAtAsc(
+                comment, Comment.CommentStatus.PUBLISHED, Pageable.unpaged());
+
+        List<CommentResponse> replyResponses = replies.stream()
+                .map(reply -> convertToCommentResponse(reply, currentUser))
+                .collect(Collectors.toList());
 
         return CommentResponse.builder()
                 .id(comment.getId().toString())
@@ -260,7 +264,8 @@ public class CommentServiceImpl implements CommentService {
                 .updatedAt(comment.getUpdatedAt())
                 .user(convertToUserInfo(comment.getUser()))
                 .parent(comment.getParent() != null ? convertToParentCommentInfo(comment.getParent()) : null)
-                .replyCount(replyCount)
+                .replies(replyResponses)
+                .replyCount(replies.size())
                 .isLiked(BooleanUtil.isTrue(isLiked))
                 .build();
     }

@@ -134,16 +134,13 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            log.warn("Token expired: {}", e.getMessage());
+//            log.warn("Token expired: {}", e.getMessage());
             return null;
         } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token: {}", e.getMessage());
             return null;
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
-            return null;
-        } catch (SignatureException e) {
-            log.error("Invalid JWT signature: {}", e.getMessage());
             return null;
         } catch (IllegalArgumentException e) {
             log.error("JWT token compact of handler are invalid: {}", e.getMessage());

@@ -1,19 +1,22 @@
 package com.aseubel.weave.redis;
 
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
+import org.redisson.client.RedisException;
+import org.redisson.client.codec.StringCodec;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Redis 服务 - Redisson
  */
 @Service("redissonService")
+@Slf4j
 public class RedissonService implements IRedisService {
 
     @Resource
@@ -217,6 +220,30 @@ public class RedissonService implements IRedisService {
     @Override
     public Boolean setNx(String key, Duration expired) {
         return redissonClient.getBucket(key).setIfAbsent("lock", expired);
+    }
+
+    @Override
+    public <T> T execute(String shaDigest, String luaScript, RScript.ReturnType returnType, List<Object> keys, Object... values) {
+        try {
+            // 在获取脚本对象时，为其指定 StringCodec
+            // 这会覆盖客户端默认的 JsonJacksonCodec，仅对本次操作有效
+            RScript script = redissonClient.getScript(StringCodec.INSTANCE);
+
+            // 优先尝试使用 EVALSHA 执行，效率最高
+            return script.evalSha(RScript.Mode.READ_WRITE, shaDigest, returnType, keys, values);
+
+        } catch (RedisException e) {
+            // 捕获 Redis 异常，并检查是不是 NOSCRIPT 错误
+            if (e.getMessage().startsWith("NOSCRIPT")) {
+                log.warn("Lua script with SHA {} not found, falling back to EVAL.", shaDigest);
+
+                // 如果是 NOSCRIPT 错误，同样使用带 StringCodec 的脚本对象执行 EVAL
+                RScript script = redissonClient.getScript(StringCodec.INSTANCE);
+                return script.eval(RScript.Mode.READ_WRITE, luaScript, returnType, keys, values);
+            }
+            // 如果是其他类型的 Redis 异常，则直接向上抛出
+            throw e;
+        }
     }
 
     @Override

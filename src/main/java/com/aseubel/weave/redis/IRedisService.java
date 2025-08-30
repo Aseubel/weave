@@ -334,6 +334,16 @@ public interface IRedisService {
      * @param luaScript 脚本内容
      * @param returnType 返回类型
      * @param keys 键
+     * @param args 值（ARGS，不能为null）
+     * @return 执行结果
+     */
+    <T> T execute(String shaDigest, String luaScript, RScript.ReturnType returnType, List<Object> keys, Object... args);
+
+    /**
+     * 执行 Lua 脚本
+     * @param luaScript 脚本内容
+     * @param returnType 返回类型
+     * @param keys 键
      * @param values 值（ARGS，不能为null）
      * @return 执行结果
      */

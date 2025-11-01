@@ -28,8 +28,12 @@ public class DesensitizationSerializer extends JsonSerializer<String> implements
 
     @Override
     public void serialize(String s, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeString(type.desensitize(s, startInclude, endExclude));
-//        System.out.println("序列化器被调用 " + s);
+        if (type == null) {
+            jsonGenerator.writeString(s);
+        } else {
+            jsonGenerator.writeString(type.desensitize(s, startInclude, endExclude));
+            System.out.println("序列化器被调用 " + s);
+        }
     }
 
     @Override
@@ -49,7 +53,10 @@ public class DesensitizationSerializer extends JsonSerializer<String> implements
                 }
             }
             // 如果数据类型不是String类型，则使用默认的序列化器
-            return serializerProvider.findValueSerializer(beanProperty.getType(), beanProperty);
+            // return serializerProvider.findValueSerializer(beanProperty.getType(), beanProperty);
+            // 如果字段不是String类型，或者是一个没有@Desensitization注解的String类型，
+            // 则返回 'this'，即返回在JacksonConfig中注册的那个默认实例。
+            return this;
         }
         return serializerProvider.findNullValueSerializer(null);
     }

@@ -1,13 +1,10 @@
-name: Build and Deploy to ACR
+name: push to ACR and deploy to server
 
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
-  # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-  # You can manually trigger a workflow run by clicking on the "Actions" tab in the repository, then selecting the workflow and clicking on the "Run workflow" button.
 
-# Environment variables available to all jobs and steps in this workflow.
 env:
   REGION_ID: cn-guangzhou
   REGISTRY: crpi-5tzwiznwaw34lfca.cn-guangzhou.personal.cr.aliyuncs.com
@@ -18,7 +15,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -63,6 +59,7 @@ jobs:
           docker push "$REGISTRY/$NAMESPACE/$IMAGE:$TAG"
 
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       # 拉取仓库代码
@@ -78,7 +75,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            set -e           # 任何命令失败就立即结束
+            set -e
             cd /weave
             sh build.sh new
             echo "✅ Deploy finished at $(date)"

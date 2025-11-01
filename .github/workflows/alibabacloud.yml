@@ -26,14 +26,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 缓存 Maven 依赖
-      # 使用 actions/cache 来缓存 .m2 目录，key 中包含 pom.xml 的哈希值。
-      # 只有当 pom.xml 文件改变时，才会重新下载依赖，否则将使用缓存，大大加快构建速度。
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: /home/runner/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
       - name: Build with Maven
         run: mvn verify -DskipTests

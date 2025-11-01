@@ -42,7 +42,7 @@ jobs:
       - name: Build with Maven
         run: mvn verify -DskipTests
 
-      # Login to ACR
+      # 用户登录
       - name: Login to ACR with the AccessKey pair
         uses: aliyun/acr-login@v1
         with:
@@ -62,12 +62,23 @@ jobs:
           echo "Pushing Docker image to ACR..."
           docker push "$REGISTRY/$NAMESPACE/$IMAGE:$TAG"
 
-      # 扫描镜像
-      - name: Scan image in ACR
-        uses: aliyun/acr-scan@v1
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 拉取仓库代码
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 登录服务器并执行部署命令
+      - name: SSH & Deploy
+        uses: appleboy/ssh-action@v1.2.0
         with:
-          region-id: "${{ env.REGION_ID }}"
-          access-key-id: "${{ secrets.ALIYUN_ACCESS_KEY_ID }}"
-          access-key-secret: "${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}"
-          repository: "${{ env.NAMESPACE }}/${{ env.IMAGE }}"
-          tag: "${{ env.TAG }}"
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            set -e           # 任何命令失败就立即结束
+            cd /weave
+            sh build.sh new
+            echo "✅ Deploy finished at $(date)"
